@@ -1,0 +1,211 @@
+//
+{'time': 1687788777814, 'product_id': 'PI_XBTUSD', 'funding_rate': 1.084767e-12, 'funding_rate_prediction': -1.02497792e-10, 'relative_funding_rate': 3.3236111111e-08, 'relative_funding_rate_prediction': -3.134458333333e-06, 'next_funding_rate_time': 1687791600000, 'feed': 'ticker', 'bid': 30571.5, 'ask': 30574.0, 'bid_size': 6000.0, 'ask_size': 4239.0, 'volume': 15466700.0, 'dtm': 0, 'leverage': '50x', 'index': 30575.63, 'premium': -0.0, 'last': 30574.0, 'change': -0.3243842404681563, 'suspended': False, 'tag': 'perpetual', 'pair': 'XBT:USD', 'openInterest': 33780409.0, 'markPrice': 30571.01290048116, 'maturityTime': 0, 'post_only': False, 'volumeQuote': 15466700.0}
+
+{
+    'feed': 'account_balances_and_margins',
+    'account': 'e8d555f5-e7d3-42a5-b9fa-66fcdf856405', 
+    'margin_accounts': [
+        {'name': 'ada', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'arb', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'atom', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'bch', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'doge', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'dot', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'eth', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'eur', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'eurt', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'f-bch:usd', 'type': 'inversed', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'f-eth:usd', 'type': 'inversed', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'f-ltc:usd', 'type': 'inversed', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'f-xbt:usd', 'type': 'inversed', 'balance': 5.7968e-07, 'pnl': 0.0, 'funding': 0.0, 'pv': 5.7968e-07, 'am': 5.7968e-07, 'im': 0.0, 'mm': 0.0},
+        {'name': 'f-xrp:usd', 'type': 'inversed', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'f-xrp:xbt', 'type': 'vanilla', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'fee', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'fil', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'gbp', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'link', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'ltc', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'matic', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'sol', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'usd', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'usd credit', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'usdc', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'usdt', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0},
+        {'name': 'xbt', 'type': 'holding', 'balance': 8.36e-09, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0}, 
+        {'name': 'xrp', 'type': 'holding', 'balance': 0.0, 'pnl': 0.0, 'funding': 0.0, 'pv': 0.0, 'am': 0.0, 'im': 0.0, 'mm': 0.0}
+        ], 
+        'seq': 0
+    }
+
+
+{
+    'feed': 'ticker_lite', 
+    'product_id': 'PI_XBTUSD', 
+    'bid': 30571.5, 
+    'ask': 30574.0, 
+    'change': -0.3243842404681563,
+    'premium': -0.0,
+    'volume': 15466700.0,
+    'tag': 'perpetual',
+    'pair': 'XBT:USD',
+    'dtm': 0,
+    'maturityTime': 0,
+    'volumeQuote': 15466700.0
+}
+
+// Ticker 
+{
+    'time': 1687797353208,
+    'product_id': 'PI_XBTUSD',
+    'funding_rate': 1.96583215e-10,
+    'funding_rate_prediction': 1.01989374e-10,
+    'relative_funding_rate': 5.979856944444e-06,
+    'relative_funding_rate_prediction': 3.091184722222e-06,
+    'next_funding_rate_time': 1687798800000,
+    'feed': 'ticker',
+    'bid': 30293.0,
+    'ask': 30296.0,
+    'bid_size': 6000.0,
+    'ask_size': 7595.0,
+    'volume': 15302295.0,
+    'dtm': 0,
+    'leverage': '50x',
+    'index': 30296.46,
+    'premium': -0.0,
+    'last': 30296.5,
+    'change': -0.7908179972493268,
+    'suspended': False,
+    'tag': 'perpetual',
+    'pair': 'XBT:USD',
+    'openInterest': 33568965.0,
+    'markPrice': 30297.40063963151,
+    'maturityTime': 0,
+    'post_only': False,
+    'volumeQuote': 15302295.0
+}
+
+// Trade 
+{
+    'feed': 'trade',
+    'product_id': 'PF_XBTUSD',
+    'uid': 'e34962f8-5f54-45b7-8685-9aedab5a7088',
+    'side': 'buy',
+    'type': 'fill',
+    'seq': 123196,
+    'time': 1687799646267,
+    'qty': 0.0001,
+    'price': 30035.0
+}
+
+// Open Orders
+{
+    'feed': 'open_orders',
+    'order': {'instrument': 'PF_XBTUSD',
+    'time': 1687800638611,
+    'last_update_time': 1687800638611,
+    'qty': 0.0001,
+    'filled': 0.0,
+    'limit_price': 20666.0,
+    'stop_price': 0.0,
+    'type': 'limit',
+    'order_id': '4436b6db-9d2e-402e-8778-3f583c9dc035',
+    'direction': 0,
+    'reduce_only': False},
+    'is_cancel': False,
+    'reason': 'new_placed_order_by_user'
+}
+
+
+{   
+    'feed': 'open_positions',
+    'account': 'e8d555f5-e7d3-42a5-b9fa-66fcdf856405',
+    'positions': [
+        {
+            'instrument': 'PF_ATOMUSD',
+
+            'balance': -55.0, 
+            'pnl': -32.43093866210002, 
+            'entry_price': 8.8656, 
+            'mark_price': 9.45525343022, 
+            'index_price': 9.456, 
+            'liquidation_threshold': 10.490954419585893, 
+            'effective_leverage': 7.885040146368423, 
+            'return_on_equity': -3.3255133900694833, 
+            'unrealized_funding': 0.0005730772241357186, 
+            'initial_margin': 9.752160000000002, 
+            'initial_margin_with_orders': 9.752160000000002, 
+            'maintenance_margin': 4.876080000000001, 
+            'pnl_currency': 'USD'
+        }
+    ], 
+    'seq': 136, 
+    'timestamp': 1687788777820
+}
+
+{'feed': 'heartbeat', 'time': 1687794734587}
+
+
+{
+    'time': 1687797353208,
+    'product_id': 'PI_XBTUSD',
+    'funding_rate': 1.96583215e-10,
+    'funding_rate_prediction': 1.01989374e-10,
+    'relative_funding_rate': 5.979856944444e-06,
+    'relative_funding_rate_prediction': 3.091184722222e-06,
+    'next_funding_rate_time': 1687798800000,
+    'feed': 'ticker',
+    'bid': 30293.0,
+    'ask': 30296.0,
+    'bid_size': 6000.0,
+    'ask_size': 7595.0,
+    'volume': 15302295.0,
+    'dtm': 0,
+    'leverage': '50x',
+    'index': 30296.46,
+    'premium': -0.0,
+    'last': 30296.5,
+    'change': -0.7908179972493268,
+    'suspended': False,
+    'tag': 'perpetual',
+    'pair': 'XBT:USD',
+    'openInterest': 33568965.0,
+    'markPrice': 30297.40063963151,
+    'maturityTime': 0,
+    'post_only': False,
+    'volumeQuote': 15302295.0
+}
+
+
+
+
+
+{
+    'feed': 'account_log_snapshot',    
+    'logs': [
+        {'id': 1556, 'date': '2023-06-26T16:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '88b0db6c-a669-4acf-a71d-cd4aba71eebc', 'margin_account': 'flex', 'old_balance': 71.9093950516, 'new_balance': 71.9125487145, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 5.7339325388893e-05, 'realized_funding': 0.0031536629, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0}, 
+        {'id': 1555, 'date': '2023-06-26T15:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '4b1a2f69-711d-4cb0-8c07-284a8e6e32b0', 'margin_account': 'flex', 'old_balance': 71.90674214147, 'new_balance': 71.9093950516, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 4.8234729583338e-05, 'realized_funding': 0.00265291013, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1554, 'date': '2023-06-26T14:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': 'ee069dbf-73c4-41ee-8d73-88ea464570c6', 'margin_account': 'flex', 'old_balance': 71.90689510553, 'new_balance': 71.90674214147, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': -2.781164708336e-06, 'realized_funding': -0.00015296406, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1553, 'date': '2023-06-26T13:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': 'e27c5e4e-6254-43e8-8da2-c5c06cdaaa64', 'margin_account': 'flex', 'old_balance': 71.9067050484, 'new_balance': 71.90689510553, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 3.45558420833e-06, 'realized_funding': 0.00019005713, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1552, 'date': '2023-06-26T12:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': 'e1e2be2d-6d84-4cfe-b287-7d5a20a29f79', 'margin_account': 'flex', 'old_balance': 71.90853891012, 'new_balance': 71.9067050484, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': -3.3342940416669e-05, 'realized_funding': -0.00183386172, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1551, 'date': '2023-06-26T11:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '78d03848-f1eb-4f25-add8-604858fccecb', 'margin_account': 'flex', 'old_balance': 71.91952968222, 'new_balance': 71.90853891012, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': -0.000199832219916668, 'realized_funding': -0.0109907721, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1550, 'date': '2023-06-26T10:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': 'a22b3ee2-1b04-4521-8c50-0a7d0521fc0d', 'margin_account': 'flex', 'old_balance': 71.92305849431, 'new_balance': 71.91952968222, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': -6.41602198125e-05, 'realized_funding': -0.00352881209, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1549, 'date': '2023-06-26T09:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '5c047d82-892a-4a96-8d0b-7658adcf1bad', 'margin_account': 'flex', 'old_balance': 71.92871987552, 'new_balance': 71.92305849431, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': -0.000102934203833338, 'realized_funding': -0.00566138121, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1548, 'date': '2023-06-26T08:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '002a2d2a-2475-404e-b873-9443845fa84a', 'margin_account': 'flex', 'old_balance': 71.92490888853, 'new_balance': 71.92871987552, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 6.929067256944e-05, 'realized_funding': 0.00381098699, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1547, 'date': '2023-06-26T07:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '530ae46d-6b78-45f3-9d7e-0cb95f5b3926', 'margin_account': 'flex', 'old_balance': 71.92502359877, 'new_balance': 71.92490888853, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': -2.085640766665e-06, 'realized_funding': -0.00011471024, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1546, 'date': '2023-06-26T06:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '438f3161-4017-43d0-975e-7a4cf7a825d5', 'margin_account': 'flex', 'old_balance': 71.92593982632, 'new_balance': 71.92502359877, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': -1.665868266667e-05, 'realized_funding': -0.00091622755, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1545, 'date': '2023-06-26T05:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': 'a1485d24-8cc9-4bd5-9050-f424767a4760', 'margin_account': 'flex', 'old_balance': 71.91887801114, 'new_balance': 71.92593982632, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 0.000128396639583335, 'realized_funding': 0.00706181518, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1544, 'date': '2023-06-26T04:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '0d4ce6a8-6b56-4c50-a890-21e61402e969', 'margin_account': 'flex', 'old_balance': 71.91042571507, 'new_balance': 71.91887801114, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 0.000153678110354166, 'realized_funding': 0.00845229607, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1543, 'date': '2023-06-26T03:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '12b229bc-080a-456f-8748-21925b30fef9', 'margin_account': 'flex', 'old_balance': 71.90889833319, 'new_balance': 71.91042571507, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 2.7770579629168e-05, 'realized_funding': 0.00152738188, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1542, 'date': '2023-06-26T02:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '9d1d3d7f-7f2b-4f90-9a67-3868900da631', 'margin_account': 'flex', 'old_balance': 71.9085188268, 'new_balance': 71.90889833319, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 6.900116202774e-06, 'realized_funding': 0.00037950639, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1541, 'date': '2023-06-26T01:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '7ca57638-8ac0-4e6f-8d85-d325545a8417', 'margin_account': 'flex', 'old_balance': 71.91479572702, 'new_balance': 71.9085188268, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': -0.00011412545861528, 'realized_funding': -0.00627690022, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1540, 'date': '2023-06-26T00:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '6c770898-312e-42b7-9594-927177924037', 'margin_account': 'flex', 'old_balance': 71.917964726, 'new_balance': 71.91479572702, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': -5.7618163258334e-05, 'realized_funding': -0.00316899898, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1539, 'date': '2023-06-25T23:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': 'bf2c2740-9579-43ce-b69a-a8ca542102c3', 'margin_account': 'flex', 'old_balance': 71.91322227703, 'new_balance': 71.917964726, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 8.6226344875e-05, 'realized_funding': 0.00474244897, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1538, 'date': '2023-06-25T22:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': 'e93c0d58-aa87-4db7-bae3-0452df5149af', 'margin_account': 'flex', 'old_balance': 71.91086904154, 'new_balance': 71.91322227703, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 4.2786099733336e-05, 'realized_funding': 0.00235323549, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1537, 'date': '2023-06-25T21:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '254be3bc-4c46-46e8-93a0-66d90c4f4050', 'margin_account': 'flex', 'old_balance': 71.90566932679, 'new_balance': 71.91086904154, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 9.4540268100003e-05, 'realized_funding': 0.00519971475, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1536, 'date': '2023-06-25T20:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '7c2e2a8a-7ff7-4142-8fba-40612aa4bea7', 'margin_account': 'flex', 'old_balance': 71.90083973704, 'new_balance': 71.90566932679, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 8.7810722816666e-05, 'realized_funding': 0.00482958975, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1535, 'date': '2023-06-25T19:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '81aa87f4-d9c2-4cdd-a2a8-f12fb15f0f23', 'margin_account': 'flex', 'old_balance': 71.89786699578, 'new_balance': 71.90083973704, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 5.404984108333e-05, 'realized_funding': 0.00297274126, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1534, 'date': '2023-06-25T18:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '6caf8bde-0848-46db-9e41-15fcf2817e2d', 'margin_account': 'flex', 'old_balance': 71.88849830487, 'new_balance': 71.89786699578, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': 0.000170339834672221, 'realized_funding': 0.00936869091, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1533, 'date': '2023-06-25T17:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': '3d031f04-46be-4db9-bff5-3a30bed728dd', 'margin_account': 'flex', 'old_balance': 71.89105240899, 'new_balance': 71.88849830487, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': -4.6438256637503e-05, 'realized_funding': -0.00255410412, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0},
+        {'id': 1532, 'date': '2023-06-25T16:00:00.000Z', 'asset': 'usd', 'contract': 'pf_atomusd', 'info': 'funding rate change', 'booking_uid': 'b0a439b8-4668-4388-92fb-595beb089347', 'margin_account': 'flex', 'old_balance': 71.89230016417, 'new_balance': 71.89105240899, 'old_average_entry_price': 0.0, 'new_average_entry_price': 0.0, 'trade_price': 0.0, 'mark_price': 0.0, 'realized_pnl': 0.0, 'fee': 0.0, 'execution': '', 'collateral': '', 'funding_rate': -2.2686457755557e-05, 'realized_funding': -0.00124775518, 'conversion_spread_percentage': 0.0, 'liquidation_fee': 0.0}
+    ]
+}   
