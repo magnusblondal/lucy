@@ -1,202 +1,191 @@
-# Crypto Facilities Ltd Web Socket API V1
-
-# Copyright (c) 2018 Crypto Facilities
-
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the "Software"),
-# to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-# and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included
-# in all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-# IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
 import json
 import hashlib
 import base64
 import hmac
-import sys
 import websocket
+import rel
 
-from time import sleep
-from threading import Thread
-from  .cfLogging import CfLogger
+from  .lucy_logging import LucyLogger
 
 from .feeds.socket_router import SocketRouter
 
 class FuturesSocketListener(object):
-    """Crypto Facilities Ltd Web Socket API Connector"""
+    '''Web Socket Client'''
 
-    # Special Methods
-
-    def __init__(self, base_url, api_key="", api_secret="", timeout=5, trace=False):
+    def __init__(self, product_ids, public_feeds_for_products, public_feeds, private_feeds, base_url, api_key="", api_secret="", timeout=5, trace=False):
         websocket.enableTrace(trace)
-        self.logger = CfLogger.get_logger("cf-ws-api")
+        self.logger = LucyLogger.get_logger("cf-ws-api")
         self.base_url = base_url
         self.api_key = api_key
         self.api_secret = api_secret
         self.timeout = timeout
-
+        self.product_ids = product_ids
+        self.public_feeds_for_products = public_feeds_for_products
+        self.public_feeds = public_feeds
+        self.private_feeds = private_feeds
         self.ws = None
         self.original_challenge = None
         self.signed_challenge = None
         self.challenge_ready = False
-
         self.router = SocketRouter()
+        self.subscribed = False
+        self._connect()
 
-        self.__connect()
-
-    # Public feeds
-    def subscribe_public(self, feed, product_ids=None):
-        """Subscribe to given feed and product ids"""
-
-        if product_ids is None:
-            request_message = {
-                "event": "subscribe",
-                "feed": feed
-            }
-        else:
-            request_message = {
-                "event": "subscribe",
+    def _message(self, feed: str, event: str, product_ids: list[str]=None) -> dict:
+        request_message = {
+            "event": event,
+            "feed": feed
+        }
+        if product_ids is not None:
+            request_message["product_ids"] = product_ids
+        return request_message
+    
+    def _signed_message(self, feed: str, event: str) -> dict:
+        return {"event": event,
                 "feed": feed,
-                "product_ids": product_ids
-            }
+                "api_key": self.api_key,
+                "original_challenge": self.original_challenge,
+                "signed_challenge": self.signed_challenge}
+        
+    def _subscribe_public(self):
+        for feed in self.public_feeds_for_products:
+            self._subscribe_public(feed, self.product_ids)
+        for feed in self.public_feeds:
+            self._subscribe_public_feed(feed)
+    
+    def _subscribe_private(self):
+        for feed in self.private_feeds:
+            self._subscribe_private_feed(feed)
+        self.subscribed = True
 
+    def unsubscribe(self):
+        for feed in self.public_feeds_for_products:
+            self._unsubscribe_public(feed, self.product_ids)
+
+        for feed in self.public_feeds:
+            self._unsubscribe_public_feed(feed)
+
+        for feed in self.private_feeds:
+            self._unsubscribe_private(feed)
+
+    def _subscribe_public_feed(self, feed: str, product_ids: list[str]=None):
+        request_message = self._message(feed, "subscribe", product_ids)        
         self.logger.info("public subscribe to %s", feed)
-
         request_json = json.dumps(request_message)
         self.ws.send(request_json)
 
-    def unsubscribe_public(self, feed, product_ids=None):
+    def _unsubscribe_public_feed(self, feed, product_ids=None):
         """UnSubscribe to given feed and product ids"""
-
-
-        if product_ids is None:
-            request_message = {
-                "event": "unsubscribe",
-                "feed": feed
-            }
-        else:
-            request_message = {
-                "event": "unsubscribe",
-                "feed": feed,
-                "product_ids": product_ids
-            }
-
+        request_message = self._message(feed, "unsubscribe", product_ids)
         self.logger.info("public unsubscribe to %s", feed)
         request_json = json.dumps(request_message)
         self.ws.send(request_json)
 
     # Private feeds
-    def subscribe_private(self, feed):
+    def _subscribe_private_feed(self, feed):
         """Unsubscribe to feed"""
 
         if not self.challenge_ready:
-            self.__wait_for_challenge_auth()
+            self._wait_for_challenge_auth()
 
-        request_message = {"event": "subscribe",
-                           "feed": feed,
-                           "api_key": self.api_key,
-                           "original_challenge": self.original_challenge,
-                           "signed_challenge": self.signed_challenge}
-
+        request_message = self._signed_message(feed, "subscribe")
         self.logger.info("private subscribe to %s", feed)
-
         request_json = json.dumps(request_message)
         self.ws.send(request_json)
 
-    def unsubscribe_private(self, feed):
+    def _unsubscribe_private(self, feed):
         """Unsubscribe to feed"""
 
         if not self.challenge_ready:
-            self.__wait_for_challenge_auth()
+            self._wait_for_challenge_auth()
 
-        request_message = {"event": "unsubscribe",
-                           "feed": feed,
-                           "api_key": self.api_key,
-                           "original_challenge": self.original_challenge,
-                           "signed_challenge": self.signed_challenge}
-
+        request_message = self._signed_message(feed, "unsubscribe")
         self.logger.info("private unsubscribe to %s", feed)
-
         request_json = json.dumps(request_message)
         self.ws.send(request_json)
 
-    def __connect(self):
+    def _connect(self):        
         """Establish a web socket connection"""
         self.ws = websocket.WebSocketApp(self.base_url,
-                                         on_message=self.__on_message,
-                                         on_close=self.__on_close,
-                                         on_open=self.__on_open,
-                                         on_error=self.__on_error,
-                                         )
+                                         on_message=self._on_message,
+                                         on_close=self._on_close,
+                                         on_open=self._on_open,
+                                         on_error=self._on_error,
+                                         )      
+        
+        self.ws.run_forever(dispatcher=rel, reconnect=3)
+        rel.signal(2, self._close)  # Keyboard Interrupt
+        rel.dispatch()
+        
 
-        self.wst = Thread(target=lambda: self.ws.run_forever(ping_interval=30))
-        self.wst.daemon = True
-        self.wst.start()
+    def _close(self):
+        """Close the web socket connection"""
+        print("Closing...")
+        self.unsubscribe()
+        self.ws.close()
+        print("Closed")
+        rel.abort()
 
-        # Wait for connect before continuing
-        conn_timeout = self.timeout
-        while (not self.ws.sock or not self.ws.sock.connected) and conn_timeout:
-            sleep(1)
-            conn_timeout -= 1
 
-        if not conn_timeout:
-            self.logger.info("Couldn't connect to", self.base_url, "! Exiting.")
-            sys.exit(1)
+    def _on_message(self, ws, message):
+        """Listen the web socket connection. Block until a message arrives. """
 
-    def __on_open(self):
-        self.logger.info("Connected to %s", self.base_url)
-    
-    def __on_message(self, message):
-        """Listen the web socket connection. Block until a message
-        arrives. """
-
+        # def run(*args):
         message_json = json.loads(message)
         self.logger.info(message_json)
 
         if message_json.get("event", "") == "challenge":
-                self.original_challenge = message_json["message"]
-                self.signed_challenge = self.__sign_challenge(self.original_challenge)
-                self.challenge_ready = True             
+            self.original_challenge = message_json["message"]
+            self.signed_challenge = self._sign_challenge(self.original_challenge)
+            self.challenge_ready = True
+            if not self.subscribed:
+                self._subscribe_private()
 
-        self.router.route(message_json)
+        else:
+            self.router.route(message_json)
+        self.logger.info(f"Challenge: {self.challenge_ready}")
+        # Thread(target=run, args=()).start()
 
-    def __on_close(self):
-        self.logger.info('Connection closed')
+    def _on_open(self, ws):
+        self.logger.info("Connected to %s", self.base_url)
+        self._request_challenge()
+        self._subscribe_public()
 
-    def __on_error(self, error):
-        self.logger.info(error)
 
-    def __wait_for_challenge_auth(self):
-        self.__request_challenge()
+    def _on_close(self, ws, close_status_code, close_msg):
+        self.logger.info(f'Connection closed: {close_status_code} {close_msg}')
+
+    def _on_error(self, ws: websocket.WebSocketApp, error: str):
+        self.logger.warn(error)
+
+
+    # def _wait_for_it(self):
+    #     self.logger.info("waiting for challenge...")
+    #     while not self.challenge_ready:
+    #         timer = Timer(1000, self._wait_for_it)
+    #         timer.start()
+
+    def _wait_for_challenge_auth(self):
+        self._request_challenge()
 
         self.logger.info("waiting for challenge...")
-        while not self.challenge_ready:
-            sleep(1)
+        # self._wait_for_it()
+        # while not self.challenge_ready:
+        #     sleep(1)
 
-    def __request_challenge(self):
+    def _request_challenge(self):
         """Request a challenge from Crypto Facilities Ltd"""
-
+        self.logger.info("Requesting Challenge...")
         request_message = {
             "event": "challenge",
             "api_key": self.api_key
         }
-
         request_json = json.dumps(request_message)
         self.ws.send(request_json)
 
-    def __sign_challenge(self, challenge):
+    def _sign_challenge(self, challenge):
         """Signed a challenge received from Crypto Facilities Ltd"""
+        self.logger.info("Signing Challenge...")
         # step 1: hash the message with SHA256
         sha256_hash = hashlib.sha256()
         sha256_hash.update(challenge.encode("utf8"))

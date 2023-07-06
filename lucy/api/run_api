@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# cd lucy.api
+uvicorn app.main:app --reload

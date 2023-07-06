@@ -122,8 +122,8 @@ class AccountLogs:
     def add(self, log: AccountLog) -> None:
         self.logs.append(log)
     
-    def last(self, cnt: int = 1) -> AccountLog:
-        return sorted(self.logs, key=lambda x: x.id, reverse=False)[-cnt:][-1]
+    def last(self) -> AccountLog:
+        return sorted(self.logs, key=lambda x: x.id, reverse=False)[-1]
     
     def tail(self, cnt: int = 5) -> list[AccountLog]:
         return sorted(self.logs, key=lambda x: x.id, reverse=False)[-cnt:]

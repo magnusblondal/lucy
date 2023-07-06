@@ -11,6 +11,8 @@ from .balances import Balances
 from .notifications_auth import NotificationsAuth
 from .account_log import AccountLog, AccountLogs
 
+from api.app.infrastructure.repos.fills_repository import FillsRepository
+
 class SocketRouter:
     openOrders: OpenOrders
     fills: Fills
@@ -57,7 +59,7 @@ class SocketRouter:
     def fills_snapshot(self, message_json, event=""):
         print('>>>>>>> Fills Snapshot------------------------------')
         self.fills = Fills.from_feed(message_json)
-        print(self.fills)
+        [print(f) for f in self.fills.tail(5)]
 
     def fills_update(self, message_json, event=""):
         print('>>>>>>> Fills ------------------------------')
@@ -65,8 +67,13 @@ class SocketRouter:
             print('Fills Subscribed Successfully')
         else:
             print('Fills Update ------------------------------')
-            self.fills.update(self.fills.update(message_json))
-            print(self.fills)
+            fills = self.fills.update(message_json)
+            if fills is not None and len(fills) > 0:
+                for f in fills:
+                    FillsRepository().add(f)
+                [print(f) for f in fills]
+            else:
+                print('No Fills !!!')
 
     # ------------------------------
     # Balances
@@ -190,4 +197,5 @@ class SocketRouter:
         except Exception as e:
             print('>>>>>>> Error ------------------------------')
             print(e)
+            print(e.with_traceback())
             print('-------------------------------------')

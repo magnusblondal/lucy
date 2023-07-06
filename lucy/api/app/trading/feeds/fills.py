@@ -1,5 +1,11 @@
 
+from datetime import datetime
+
+
 class Fill:
+    id: str
+    '''The fill id (fill_id).'''
+    fill_type: str
     instrument: str                                                             
     '''The fill instrument (referred also as symbol or product_id).'''
     time: int
@@ -16,9 +22,6 @@ class Fill:
     '''The remaining quantity of the order that has not been filled.'''
     order_id: str
     '''The order id that was filled.'''
-    fill_id: str
-    '''The fill id.'''
-    fill_type: str
     '''The classification of the fill:
         'maker'              if the user has a limit order that gets filled,
         'taker'              if the user makes an execution that crosses the spread,
@@ -40,7 +43,8 @@ class Fill:
     cli_ord_id: str
     '''The unique client order identifier. This field is returned only if the order has a client order id.'''
 
-    def __init__(self, instrument: str, time: int, price: float, seq: int, buy: bool, qty: float, remaining_order_qty: float, order_id: str, fill_id: str, fill_type: str, fee_paid: float, fee_currency: str, taker_order_type: str, order_type: str, cli_ord_id: str) -> None:
+    def __init__(self, fill_id: str, instrument: str, time: int, price: float, seq: int, buy: bool, qty: float, remaining_order_qty: float, order_id: str, fill_type: str, fee_paid: float, fee_currency: str, taker_order_type: str, order_type: str, cli_ord_id: str) -> None:
+        self.id = fill_id
         self.instrument = instrument
         self.time = time
         self.price = price
@@ -49,7 +53,6 @@ class Fill:
         self.qty = qty
         self.remaining_order_qty = remaining_order_qty
         self.order_id = order_id
-        self.fill_id = fill_id
         self.fill_type = fill_type
         self.fee_paid = fee_paid
         self.fee_currency = fee_currency
@@ -58,11 +61,14 @@ class Fill:
         self.cli_ord_id = cli_ord_id
 
     def __str__(self) -> str:
-        return f"Fill:: instrument: {self.instrument}, time: {self.time}, price: {self.price}, seq: {self.seq}, buy: {self.buy}, qty: {self.qty}, remaining_order_qty: {self.remaining_order_qty}, order_id: {self.order_id}, fill_id: {self.fill_id}, fill_type: {self.fill_type}, fee_paid: {self.fee_paid}, fee_currency: {self.fee_currency}, taker_order_type: {self.taker_order_type}, order_type: {self.order_type}, cli_ord_id: {self.cli_ord_id}"
+        return f"Fill:: instrument: {self.instrument}, time: {self.time}, price: {self.price}, seq: {self.seq}, buy: {self.buy}, qty: {self.qty}, remaining_order_qty: {self.remaining_order_qty}, order_id: {self.order_id}, fill_id: {self.id}, fill_type: {self.fill_type}, fee_paid: {self.fee_paid}, fee_currency: {self.fee_currency}, taker_order_type: {self.taker_order_type}, order_type: {self.order_type}, cli_ord_id: {self.cli_ord_id}"
 
+    def dtm(self) -> datetime:
+        return datetime.fromtimestamp(self.time / 1000)
     @staticmethod
     def from_feed(data) -> 'Fill':
         return Fill(
+            data['fill_id']                 if 'fill_id' in data else None,
             data['instrument']              if 'instrument' in data else "",
             data['time']                    if 'time' in data else None,
             data['price']                   if 'price' in data else None,
@@ -71,7 +77,6 @@ class Fill:
             data['qty']                     if 'qty' in data else None,
             data['remaining_order_qty']     if 'remaining_order_qty' in data else None,
             data['order_id']                if 'order_id' in data else None,
-            data['fill_id']                 if 'fill_id' in data else None,
             data['fill_type']               if 'fill_type' in data else None,
             data['fee_paid']                if 'fee_paid' in data else None,
             data['fee_currency']            if 'fee_currency' in data else None,
@@ -100,7 +105,7 @@ class Fills:
         fills = f"\n  {fills}" if len(fills) > 0 else "No fills"
         return f"Fills:: fills: {len(self.fills)} {fills}"
     
-    def update(self, data) -> None:
+    def update(self, data) -> list[Fill]:
         try:
             if data is None:
                 print("Data is None")
@@ -108,5 +113,13 @@ class Fills:
             fs = [ Fill.from_feed(fill) for fill in data['fills'] ]
             for fill in fs:
                 self.fills.append(fill)
+            return fs
         except Exception as e:
             print(f"Error updating fills: {e}")
+            return []
+    
+    def last(self) -> Fill:
+        return sorted(self.fills, key=lambda x: x.seq, reverse=False)[-1]
+    
+    def tail(self, cnt: int = 5) -> list[Fill]:
+        return sorted(self.fills, key=lambda x: x.seq, reverse=False)[-cnt:]

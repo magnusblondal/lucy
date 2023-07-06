@@ -8,7 +8,7 @@ LOG_IN_FILE = False
 LOG_PATH = "..."
 LOG_FILENAME = "..."
 
-class CfLogger(object):
+class LucyLogger(object):
 
     @staticmethod
     def get_logger(name):

@@ -43,8 +43,11 @@ class Exchange:
     def _place_market_order(self, symbol, side, size, client_order_id: str=None, reduce_only: bool=False) -> OrderResults:
         print(f"Placing market order {side} {size} {symbol}")
         res = self._place_order(OrderType.MARKET, symbol, side, size, limit_price=None, client_order_id=client_order_id, reduce_only=reduce_only)
-        # print(res)
-        
+        print(res)
+        # TODO: Handle this
+        #         Sell Market pf_ethusd 0.05235602094240838
+        # Placing market order sell 0.05235602094240838 pf_ethusd
+        # {'result': 'success', 'sendStatus': {'status': 'invalidSize'}, 'serverTime': '2023-06-30T17:04:07.001Z'}
         success = res["result"] == 'success'
         if success:
             # {'result': 'success', 'sendStatus': {'status': 'invalidSize'}, 'serverTime': '2023-05-27T17:21:57.429Z'} TODO: Handle this

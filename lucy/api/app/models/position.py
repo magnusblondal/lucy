@@ -83,7 +83,7 @@ class Position(DomainModel):
     def entry(self, signal: Signal, entry_size: float):
         self._this_just_happened(SignalEvent(signal, self.id))
         qty = entry_size / signal.close
-        # qty = round(qty, 0)
+        qty = round(qty, 0)
         order = self._handle_order(signal, qty)
         self._this_just_happened(PositionEntryEvent(position_id=self.id, bot_id=self.bot_id, symbol=self.symbol, qty=qty, side=self.side))
         self._this_just_happened(OrderCreatedEvent(self.id, self.bot_id, 'entry', order))
