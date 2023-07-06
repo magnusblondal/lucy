@@ -11,7 +11,7 @@ from .balances import Balances
 from .notifications_auth import NotificationsAuth
 from .account_log import AccountLog, AccountLogs
 
-from api.app.infrastructure.repos.fills_repository import FillsRepository
+from lucy.api.app.infrastructure.repos.fills_repository import FillsRepository
 
 class SocketRouter:
     openOrders: OpenOrders

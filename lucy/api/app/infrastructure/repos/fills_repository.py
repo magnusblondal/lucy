@@ -1,6 +1,6 @@
 from ...models.id import Id
 from .repository import Repository
-from api.app.trading.feeds.fills import Fill, Fills
+from lucy.api.app.trading.feeds.fills import Fill, Fills
 
 class FillsRepository(Repository):
     def _build(self, row: tuple) -> Fill:

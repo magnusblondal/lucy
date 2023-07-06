@@ -1,7 +1,7 @@
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 @dataclass_json
 @dataclass

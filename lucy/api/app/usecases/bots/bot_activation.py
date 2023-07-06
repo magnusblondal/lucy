@@ -2,7 +2,7 @@
 from ..usecase import Usecase
 from ...infrastructure.repos.bot_repository import BotRepository
 from ...models.bot import DcaBot
-import api.app.events.bus as bus
+import lucy.api.app.events.bus as bus
 
 class BotActivationResult:
     success: bool

@@ -1,15 +1,15 @@
 import click
 from rich import inspect
 
-import api.app.events.bus as bus
+import lucy.api.app.events.bus as bus
 
-from ..views.bot_view import BotView
-from api.app.models.bot import DcaBot
-from api.app.models.create_bot import CreateDcaBot, EditDcaBot
-from api.app.infrastructure.repos.bot_repository import BotRepository
+from lucy.cli.views.bot_view import BotView
+from lucy.api.app.models.bot import DcaBot
+from lucy.api.app.models.create_bot import CreateDcaBot, EditDcaBot
+from lucy.api.app.infrastructure.repos.bot_repository import BotRepository
 
-from api.app.usecases.bots.bot_activation import BotActivation
-from api.app.usecases.bots.audit import AuditBot
+from lucy.api.app.usecases.bots.bot_activation import BotActivation
+from lucy.api.app.usecases.bots.audit import AuditBot
 
 class BotController:
     view: BotView = BotView()

@@ -1,16 +1,17 @@
 from rich import inspect
 
-from api.app.trading.pairs_usd_pf import *
-from api.app.trading.exchange import Exchange
+from lucy.api.app.trading.pairs_usd_pf import *
+from lucy.api.app.trading.exchange import Exchange
 
-from api.app.usecases.trade.sell import Sell
-from api.app.usecases.trade.buy import Buy
+from lucy.api.app.usecases.trade.sell import Sell
+from lucy.api.app.usecases.trade.buy import Buy
 
-from cli.views.open_order_view import OpenOrderView
-import api.app.events.bus as bus
+from lucy.cli.views.open_order_view import OpenOrderView
+import lucy.api.app.events.bus as bus
 
 class OrderController:
-    view:OpenOrderView = OpenOrderView()
+    def __init__(self):
+        self.view = OpenOrderView()
 
     def market_order(self, symbol: str, qty: float, short: bool = False):
         '''Create a market order'''

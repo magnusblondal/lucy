@@ -1,6 +1,6 @@
 from  .futures_web_socket import FuturesSocketListener
-from  .lucy_logging import LucyLogger
-logger = LucyLogger.get_logger("futures_socket_connector")
+from  .logging_ws_socket import SocketLogger
+logger = SocketLogger.get_logger("futures socket connector")
 
 api_path = "wss://www.cryptofacilities.com/ws/v1"
 api_key = "3EWPFVk88Cmol8hw8falnfA67Q5RAhnT8jysgfif9gnKmhf0KacIddHA"

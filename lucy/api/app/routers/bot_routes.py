@@ -1,22 +1,26 @@
 from fastapi import APIRouter, status
 
+from lucy.api.api_logging import ApiLogger
+
 from ..models.create_bot import CreateDcaBot
 from ..models.bot import DcaBot
 from ..infrastructure.repos.bot_repository import BotRepository
 
 router = APIRouter()
+logger = ApiLogger.get_logger("bot_routes")
 
-@router.get("/bot")
+@router.get("/bots")
 def all_bots():
+    logger.info("Fetching all bots")
     bots = BotRepository().fetch_bots()
     return {"data": bots}
 
-@router.get("/bot/{bot_id}")
+@router.get("/bots/{bot_id}")
 def bot(bot_id: str):
     return {"data": BotRepository().fetch_bot(bot_id)}
 
 
-@router.get("/bot/{bot_id}/summary")
+@router.get("/bots/{bot_id}/summary")
 def bot(bot_id: str):
     bot = BotRepository().fetch_bot(bot_id)
     positionsCnt = len(bot.positions)
@@ -37,7 +41,7 @@ def bot(bot_id: str):
 
     return {"data": resp}
 
-@router.post("/bot", status_code = status.HTTP_201_CREATED)
+@router.post("/bots", status_code = status.HTTP_201_CREATED)
 def create_bot(create_bot: CreateDcaBot):
     bot = DcaBot.create_new(create_bot)
     BotRepository().save(bot)

@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import bot_routes, trade_routes, tv_signal_routes
+from lucy.api.app.routers import bot_routes, trade_routes, tv_signal_routes
 
 app = FastAPI()
 

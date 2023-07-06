@@ -3,8 +3,8 @@ from typing import List
 from rich import inspect, print
 from rich.table import Table
 
-from api.app.trading.open_order import OpenOrder
-from api.app.models.bot import DcaBot, Bot
+from lucy.api.app.trading.open_order import OpenOrder
+from lucy.api.app.models.bot import DcaBot, Bot
 
 from .view import View
 

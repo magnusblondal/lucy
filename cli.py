@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 import click
 
-from api.app.trading.pairs_usd_pf import *
-from api.app.trading.exchange import Exchange
-import api.app.trading.futures_socket_connector as web_socket_api
+from lucy.api.app.trading.pairs_usd_pf import *
+from lucy.api.app.trading.exchange import Exchange
+import lucy.api.app.trading.futures_socket_connector as web_socket_api
 
-from cli.views.position_view import PositionsView
-from cli.views.currency_view import CurrencyView
-from cli.controllers.bot_controller import BotController
-from cli.controllers.order_controller import OrderController
+from lucy.cli.views.position_view import PositionsView
+from lucy.cli.views.currency_view import CurrencyView
+from lucy.cli.controllers.bot_controller import BotController
+from lucy.cli.controllers.order_controller import OrderController
 
 from rich import inspect
 
@@ -24,7 +24,7 @@ def cli():
 @cli.command()
 def info():
     _positions()
-    OrderController().open_orders()
+    # OrderController().open_orders()
 
 @cli.command()
 def pos():

@@ -5,7 +5,7 @@ import hmac
 import websocket
 import rel
 
-from  .lucy_logging import LucyLogger
+from  .logging_ws_socket import SocketLogger
 
 from .feeds.socket_router import SocketRouter
 
@@ -14,7 +14,7 @@ class FuturesSocketListener(object):
 
     def __init__(self, product_ids, public_feeds_for_products, public_feeds, private_feeds, base_url, api_key="", api_secret="", timeout=5, trace=False):
         websocket.enableTrace(trace)
-        self.logger = LucyLogger.get_logger("cf-ws-api")
+        self.logger = SocketLogger.get_logger("futures-ws-api")
         self.base_url = base_url
         self.api_key = api_key
         self.api_secret = api_secret
