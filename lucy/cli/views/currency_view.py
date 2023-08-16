@@ -3,7 +3,7 @@ from rich import print
 # from rich import inspect
 # from rich.panel import Panel
 from rich.table import Table
-from ..models.flex import Currency
+from lucy.application.trading.flex import Currency
 
 from .view import View
 

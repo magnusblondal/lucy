@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
-from ..models.signal_incoming import SignalIncoming
+from lucy.model.signal_incoming import SignalIncoming
 from lucy.api.app.services.signal_service import SignalService
 
 router = APIRouter()

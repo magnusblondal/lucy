@@ -1,10 +1,10 @@
 from fastapi import APIRouter, status
 
-from lucy.api.api_logging import ApiLogger
+from lucy.api.logging_api import ApiLogger
 
-from ..models.create_bot import CreateDcaBot
-from ..models.bot import DcaBot
-from ..infrastructure.repos.bot_repository import BotRepository
+from lucy.model.create_bot import CreateDcaBot
+from lucy.model.bot import DcaBot
+from lucy.infrastructure.repos.bot_repository import BotRepository
 
 router = APIRouter()
 logger = ApiLogger.get_logger("bot_routes")

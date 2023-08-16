@@ -1,13 +1,13 @@
 from rich import inspect
 
-from lucy.api.app.trading.pairs_usd_pf import *
-from lucy.api.app.trading.exchange import Exchange
+from lucy.application.trading.pairs_usd_pf import *
+from lucy.application.trading.exchange import Exchange
 
-from lucy.api.app.usecases.trade.sell import Sell
-from lucy.api.app.usecases.trade.buy import Buy
+from lucy.application.usecases.trade.sell import Sell
+from lucy.application.usecases.trade.buy import Buy
 
 from lucy.cli.views.open_order_view import OpenOrderView
-import lucy.api.app.events.bus as bus
+import lucy.application.events.bus as bus
 
 class OrderController:
     def __init__(self):

@@ -26,14 +26,12 @@ class View:
     def warning(self, msg: str) -> None:
         print(f"[bold orange]{msg}[/bold orange]")
 
-    def open(self, msg: str) -> None:
+    def open(self, msg: str) -> str:
         return f"[bold purple]{msg}[/bold purple]"
   
-    def closed(self, msg: str) -> None:
+    def closed(self, msg: str) -> str:
         return f"[bold yellow]{msg}[/bold yellow]"
 
-    def open_or_closed(self, is_open: bool) -> str:
-        return self.open('OPEN') if is_open else self.closed('CLOSED')
     
     def left_pad(self, s: str, length: int = 1) -> str:
         ss = "{:>" + str(length) + "}"
@@ -42,3 +40,10 @@ class View:
     def right_pad(self, s: str, length: int = 1) -> str:
         ss = "{:<" + str(length) + "}"
         return ss.format(s)
+    
+    def open_or_closed(self, is_open: bool, use_symbol: bool = True) -> str:
+        if use_symbol:
+            return "✅" if is_open else "❌"
+        else:
+            return self.open('OPEN') if is_open else self.closed('CLOSED')
+    

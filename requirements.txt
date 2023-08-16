@@ -11,3 +11,13 @@ shortuuid
 
 six==1.12.0
 websocket-client==1.6.1
+
+pandas==2.0.3
+numpy==1.25
+matplotlib==3.7.2
+
+nbformat>=4.2.0
+
+pandas_ta
+schedule>=1.2
+mplfinance==3.7.2

@@ -1,8 +1,8 @@
 from rich import inspect
 
-from ..infrastructure.repos.bot_repository import BotRepository
-from ..models.signal_incoming import SignalIncoming
-from ..events import bus
+from lucy.infrastructure.repos.bot_repository import BotRepository
+from lucy.model.signal_incoming import SignalIncoming
+from lucy.application.events import bus
 
 class SignalService:
     def handle(self, signal: SignalIncoming) -> tuple[bool, str]:

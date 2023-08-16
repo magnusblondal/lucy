@@ -1,17 +1,15 @@
 
 
 from pydantic import BaseModel
-import shortuuid
+from datetime import datetime, timedelta
 
-def generate_id():
-    return shortuuid.ShortUUID().random(length=10)
+from lucy.application.trading.exchange import Exchange
+from lucy.model.interval import Interval
+import lucy.application.utils.dtm_utils as dtm
 
+from lucy.main_logger import MainLogger
+import lucy.application.events.bus as bus
 
-class Foo(BaseModel):
-    a: int
-    s: str = None
+logger = MainLogger.get_logger(__name__)
 
-    def __init__(self, a: int, s: str = None) -> None:
-        self.a = a
-
-print(Foo(1).dict())
+logger.info('Testing started')

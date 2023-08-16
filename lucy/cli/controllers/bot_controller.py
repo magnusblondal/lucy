@@ -1,15 +1,15 @@
 import click
 from rich import inspect
 
-import lucy.api.app.events.bus as bus
+import lucy.application.events.bus as bus
 
 from lucy.cli.views.bot_view import BotView
-from lucy.api.app.models.bot import DcaBot
-from lucy.api.app.models.create_bot import CreateDcaBot, EditDcaBot
-from lucy.api.app.infrastructure.repos.bot_repository import BotRepository
+from lucy.model.bot import DcaBot
+from lucy.model.create_bot import CreateDcaBot, EditDcaBot
+from lucy.infrastructure.repos.bot_repository import BotRepository
 
-from lucy.api.app.usecases.bots.bot_activation import BotActivation
-from lucy.api.app.usecases.bots.audit import AuditBot
+from lucy.application.usecases.bots.bot_activation import BotActivation
+from lucy.application.usecases.bots.audit import AuditBot
 
 class BotController:
     view: BotView = BotView()
@@ -21,6 +21,8 @@ class BotController:
         name                = click.prompt('Name',                      type=str)
         type                = click.prompt('Type',                      type=str, default='DCA')
         active              = click.prompt('Active',                    type=bool, default=True)
+        symbol              = click.prompt('Symbol',                    type=str, default='BTCUSD')
+        interval            = click.prompt('Interval (1 5 15 60  240 (4h)  1440 (24h))',                  type=int,  default=60)
         max_positions       = click.prompt('Max Concurrent Positions',  type=int,  default=1)
         capital             = click.prompt('Capital',                   type=float)
         entry_size          = click.prompt('Entry Size',                type=float)
@@ -37,7 +39,9 @@ class BotController:
             so_size = so_size,
             max_safety_orders = max_safety_orders,
             allow_shorts = allow_shorts,
-            max_positions_allowed = max_positions)
+            max_positions_allowed = max_positions,
+            interval = interval,
+            symbol = symbol)
 
         bot = DcaBot.create_new(gen)
         repo = BotRepository()
@@ -55,6 +59,8 @@ class BotController:
         self.view.process_title(f"Edit bot '{bot.name}' (id: {bot.id})")
         name                = click.prompt('Name', type=str, default=bot.name)
         active              = click.prompt('Active', type=bool, default=bot.active)
+        symbol              = click.prompt('Symbol',                    type=str, default=bot.symbol)
+        interval            = click.prompt('Interval (1 5 15 60  240 (4h)  1440 (24h))', type=int,  default=bot.interval.interval)
         max_positions       = click.prompt('Max Concurrent Positions',  type=int,  default=bot.num_positions_allowed)
         capital             = click.prompt('Capital', type=float, default=bot.capital)
         entry_size          = click.prompt('Entry Size', type=float, default=bot.entry_size)
@@ -71,7 +77,9 @@ class BotController:
             so_size = so_size,
             max_safety_orders = max_safety_orders,
             allow_shorts = allow_shorts,
-            max_positions_allowed = max_positions)
+            max_positions_allowed = max_positions,
+            interval = interval,
+            symbol = symbol)
         bot.update(edit)
 
         if click.confirm('Do you want to continue?', default=True, abort=True):
@@ -87,10 +95,10 @@ class BotController:
         bots = self.repo.fetch_bots()
         self.view.listi(bots, 'Bots')
 
-    def bot_info(self, id: str, verbose: bool):
+    def bot_info(self, id: str, verbose: bool, signals: bool):
         '''Show bot details'''
         bot = self.repo.fetch_bot(id)
-        self.view.show(bot, verbose)
+        self.view.show(bot, signals, verbose)
 
     def _activation_callback(self, result, id: str, starting: bool):
         if result is None:

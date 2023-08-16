@@ -1,15 +1,14 @@
-from lucy.api.app.models.id import Id
-from lucy.api.app.models.domain_model import DomainModel
-from lucy.api.app.models.signal import Signal
+from lucy.model.id import Id
+from lucy.model.domain_model import DomainModel
+from lucy.model.signal import Signal
 from datetime import datetime
-from lucy.api.app.events.event import DomainEvent
-from lucy.api.app.trading.exchange import Exchange
-from lucy.api.app.trading.instrument import Instrument
+from lucy.application.events.event import DomainEvent
+from lucy.application.trading.exchange import Exchange
+from lucy.application.trading.instrument import Instrument
 
 import websocket
 from threading import Thread
 import time
-import sys
 
 import rel
 

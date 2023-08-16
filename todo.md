@@ -1,3 +1,18 @@
+BUGS:
+Ef vantar fills, þá þarf að sækja
+SO er triggerað of hátt
+WS Connection dettur út
+
+logger skrifar hverja færslu nokkrum sinnum
+
+
+BB_Breakout:
+þegar close er að koma niður í range (bbu_fast < close < bbu_slow)
+þá er trendið á niðurleið og á ekki að kaupa!
+
+
+TODOs:
+Færa api key í betra form
 
 -> hví þarf ég að rounda atom í heila tölu?
 "symbol": "pf_atomusd",
@@ -14,3 +29,8 @@ logging
 
 panic button
 leverage
+
+
+
+Muna:
+setja max lines aftur í 5000 -> dtm_utils

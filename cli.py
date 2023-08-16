@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 import click
 
-from lucy.api.app.trading.pairs_usd_pf import *
-from lucy.api.app.trading.exchange import Exchange
-import lucy.api.app.trading.futures_socket_connector as web_socket_api
+from lucy.application.trading.pairs_usd_pf import *
+from lucy.application.trading.exchange import Exchange
+import lucy.application.trading.futures_socket_connector as web_socket_api
 
 from lucy.cli.views.position_view import PositionsView
 from lucy.cli.views.currency_view import CurrencyView
 from lucy.cli.controllers.bot_controller import BotController
 from lucy.cli.controllers.order_controller import OrderController
+from lucy.cli.controllers.runner import Runner
 
 from rich import inspect
 
@@ -21,12 +22,12 @@ def _positions():
 def cli():
     pass
 
-@cli.command()
+@cli.command(help='Show Positions and Open Orders')
 def info():
     _positions()
-    # OrderController().open_orders()
+    OrderController().open_orders()
 
-@cli.command()
+@cli.command(help='Show open Positions')
 def pos():
     _positions()
 
@@ -39,14 +40,14 @@ def accounts():
 # ----------
 # Open Orders
 # ----------
-@cli.command()
+@cli.command(help='Open orders')
 def orders():
     OrderController().open_orders()
 
 # ----------
 # Market orders
 # ----------
-@cli.command()
+@cli.command(help='Create market order')
 @click.argument('symbol')
 @click.argument('qty')
 @click.option('-s', '--short', is_flag=True, default=False, help='Short order')
@@ -56,7 +57,7 @@ def market(symbol, qty, short):
 # ----------
 # Buy
 # ----------
-@cli.command()
+@cli.command(help='Buy by symbol')
 @click.argument('symbol')
 @click.argument('qty')
 def buy(symbol, qty):
@@ -65,7 +66,7 @@ def buy(symbol, qty):
 # ----------
 # Sell
 # ----------
-@cli.command()
+@cli.command(help='Sell by symbol')
 @click.argument('symbol')
 @click.argument('qty', default=0, type=click.FLOAT) # , help='Quantity to sell. If not given, sell all.'
 def sell(symbol, qty):
@@ -74,7 +75,7 @@ def sell(symbol, qty):
 # ----------
 # Close position
 # ----------
-@cli.command()
+@cli.command(help='Close position by symbol')
 @click.argument('symbol')
 def close(symbol):
     OrderController().close(symbol)
@@ -82,7 +83,7 @@ def close(symbol):
 # ----------
 # Limit Order
 # ----------
-@cli.command()
+@cli.command(help='Create limit order')
 @click.argument('symbol')
 @click.argument('qty')
 @click.argument('price', type=click.FLOAT)
@@ -101,7 +102,7 @@ def cancel(symbol):
 # ----------
 # Edit order
 # ----------
-@cli.command()
+@cli.command(help='Edit order')
 @click.argument('order_id')
 @click.argument('qty', type=click.FLOAT)
 @click.argument('price', type=click.FLOAT)
@@ -111,7 +112,7 @@ def edit(order_id, qty, price):
 # ----------
 # Order Status
 # ----------
-@cli.command()
+@cli.command(help='Order status')
 @click.argument('order_id')
 def status(order_id):
     OrderController().order_status(order_id)
@@ -134,9 +135,10 @@ def bots():
 # ----------
 @cli.command(help="Show Bot details")
 @click.option( '-v', '--verbose', is_flag=True, default=False, help='Show further details')
+@click.option( '-s', '--signals', is_flag=True, default=False, help='Show signals')
 @click.argument('id', type=click.STRING)
-def bot(id:str, verbose:bool):
-    BotController().bot_info(id, verbose)
+def bot(id:str, verbose:bool, signals:bool):
+    BotController().bot_info(id, verbose, signals)
 
 # ----------
 # Add new bot
@@ -160,7 +162,7 @@ def edit(id):
 # ----------
 # Audit bot
 # ----------
-@cli.command()
+@cli.command(help="Calculate PnL for bot")
 @click.argument('id')
 def audit(id):
     BotController().audit(id)
@@ -168,7 +170,7 @@ def audit(id):
 # ----------
 # Start bot
 # ----------
-@cli.command()
+@cli.command(help="Start bot")
 @click.argument('id')
 def start(id):
     BotController().start_bot(id)
@@ -176,7 +178,7 @@ def start(id):
 # ----------
 # Stop bot
 # ----------
-@cli.command()
+@cli.command(help="Stop bot")
 @click.argument('id', type=click.STRING, default="")
 def stop(id):
     if id == "":
@@ -185,10 +187,15 @@ def stop(id):
     else:
         BotController().stop_bot(id)
 
-@cli.command()
+@cli.command(help='Listen to websocket')
 def listen():
     print("Listening...")
     web_socket_api.listen()
+
+
+@cli.command(help='Run Forrest, run!')
+def run():
+    Runner().start()
 
 if __name__ == '__main__':
     cli()

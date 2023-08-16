@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 
-from ..usecases.trade.sell import Sell
-from ..usecases.trade.buy import Buy
+from lucy.application.usecases.trade.sell import Sell
+from lucy.application.usecases.trade.buy import Buy
 
 router = APIRouter()
 
