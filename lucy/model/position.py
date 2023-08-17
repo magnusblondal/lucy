@@ -5,7 +5,7 @@ from pyparsing import Iterator
 from lucy.model.order import Order, Orders
 from lucy.model.domain_model import DomainModel
 from lucy.model.id import Id
-from lucy.model.signal import Signal
+from lucy.model.signal import Signal, Signals
 
 from lucy.application.events.some_events import PositionEntryEvent, AddFundsEvent, PositionExitEvent, SignalEvent, ProfitCalculatedEvent
 from lucy.application.events.order_events import OrderCreatedEvent
@@ -18,15 +18,7 @@ from lucy.main_logger import MainLogger
 from rich import inspect
 
 class Position(DomainModel):
-    bot_id: Id
-    signals: list[Signal] = []
-    # orders: Orders
-    symbol: str = ""
-    profit: float = 0.0
-    profit_pct: float = 0.0
-    side: str = ""
-    created_at: datetime = None
-
+    
     def __init__(self, id: Id, bot_id: Id, symbol: str, side:str, 
                  profit: float = 0.0, profit_pct:float = 0.0,
                  created_at: datetime = None) -> None:
@@ -38,7 +30,7 @@ class Position(DomainModel):
         self.profit_pct = profit_pct
         self.created_at = created_at or None
         self.orders = Orders()
-        # self.fills = Fills([])
+        self.signals = Signals()
         self.exchange = Exchange()
         super().__init__(id)
 
@@ -199,21 +191,9 @@ class Position(DomainModel):
         return f"Position {self.id} Bot: {self.bot_id}, {oc} {pnl} {self.created_at}\n{ss}\n{os}"
     
     
-class Positions(object):
-    def __init__(self, positions: list[Position]=[]) -> None:
-        self.positions = positions
-    
-    def __iter__(self) -> Iterator[Position]:
-        return iter(self.positions)
-    
-    def __len__(self) -> int:
-        return len(self.positions)
-    
-    def __getitem__(self, key: int) -> Position:    
-        return self.positions[key]
-    
-    def __contains__(self, item: Position) -> bool:
-        return item in self.positions
+class Positions(list[Position]):
+    def __init__(self, positions: list[Position] = None) -> None:
+        super().__init__(positions or [])
     
     def create_new(self, signal: Signal) -> 'Position':
         symbol = pair_symbol(signal.ticker)
@@ -222,40 +202,36 @@ class Positions(object):
         return p
     
     def has_open(self, symbol:str) -> tuple[bool, Position]:
-        for p in self.positions:
+        for p in self:
             if p.symbol == symbol and p.is_open():
                 return (True, p)
         return (False, None)
     
     def find_open_by_symbol(self, symbol:str) -> Position:
-        return next((p for p in self.positions if p.symbol == symbol and p.is_open()), None)
-        
-    def append(self, position: Position):
-        self.positions.append(position)
+        return next((p for p in self if p.symbol == symbol and p.is_open()), None)
     
     def is_empty(self) -> bool:
-        return len(self.positions) == 0
+        return len(self) == 0
     
     def average_price_for(self, pair:str):
         return self.find_open_by_symbol(pair).average_price()
         
     def profit(self) -> float:
         '''Returns the total profit for all positions'''
-        return sum([position.profit for position in self.positions if position.profit is not None])
+        return sum([position.profit for position in self if position.profit is not None])
     
     def num_open(self) -> int:
-        return len([p for p in self.positions if p.is_open()])
+        return len([p for p in self if p.is_open()])
 
     def num_closed(self) -> int:
-        return len([p for p in self.positions if not p.is_open()])
+        return len([p for p in self if not p.is_open()])
 
     def __str__(self) -> str:
-        return '\n'.join([str(p) for p in self.positions])
+        return '\n'.join([str(p) for p in self])
     
     def position_for_signal(self, signal: Signal) -> Position:        
-        ps = [p for p in self.positions if p.fits_signal(signal)]
+        ps = [p for p in self if p.fits_signal(signal)]
         open = [p for p in ps if p.is_open()]
-
         return open[0] if len(open) > 0 else None
     
     # {

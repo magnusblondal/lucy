@@ -58,3 +58,7 @@ class Signal:
     
     def is_valid(self) -> bool:
         return not self.is_empty()
+
+class Signals(list[Signal]):
+    def __init__(self, signals: list[Signal] = None) -> None:
+        super().__init__(signals or [])

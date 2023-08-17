@@ -6,10 +6,6 @@ WS Connection dettur út
 logger skrifar hverja færslu nokkrum sinnum
 
 
-BB_Breakout:
-þegar close er að koma niður í range (bbu_fast < close < bbu_slow)
-þá er trendið á niðurleið og á ekki að kaupa!
-
 
 TODOs:
 Færa api key í betra form

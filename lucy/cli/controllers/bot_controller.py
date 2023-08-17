@@ -45,13 +45,13 @@ class BotController:
 
         bot = DcaBot.create_new(gen)
         repo = BotRepository()
-        repo.save(bot)
+        repo.add(bot)
 
         self.view.confirmation(f"Bot '{bot.name}' created. Id: '{bot.id}'")
 
     def edit(self, id: str):
         '''Edit Bot'''
-        bot = self.repo.fetch_bot(id)
+        bot = self.repo.fetch(id)
         if bot is None:
             self.view.warning(f"Bot with id '{id}' not found")
             return
@@ -97,7 +97,7 @@ class BotController:
 
     def bot_info(self, id: str, verbose: bool, signals: bool):
         '''Show bot details'''
-        bot = self.repo.fetch_bot(id)
+        bot = self.repo.fetch(id)
         self.view.show(bot, signals, verbose)
 
     def _activation_callback(self, result, id: str, starting: bool):

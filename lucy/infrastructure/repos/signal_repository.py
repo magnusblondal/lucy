@@ -1,4 +1,4 @@
-from lucy.model.signal import Signal
+from lucy.model.signal import Signal, Signals
 from lucy.model.id import Id
 from .repository import Repository
 
@@ -40,17 +40,17 @@ class SignalRepository(Repository):
         result = self._fetch_one(sql, values)
         return self._build(result)
 
-    def fetch_for_position(self, position_id: Id) -> list[Signal]:
+    def fetch_for_position(self, position_id: Id) -> Signals:
         sql = '''
             SELECT * FROM signals WHERE position_id = %s '''
         values = (position_id.id,)
         res = self._fetch_all(sql, values)
-        return [self._build(row) for row in res]
+        return Signals([self._build(row) for row in res])
     
-    def fetch_for_bot(self, bot_id: Id) -> list[Signal]:
+    def fetch_for_bot(self, bot_id: Id) -> Signals:
         sql = '''
             SELECT * FROM signals WHERE bot_id = %s
             '''
         values = (bot_id.id,)
         res = self._fetch_all(sql, values)
-        return [self._build(row) for row in res]
+        return Signals([self._build(row) for row in res])

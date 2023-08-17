@@ -65,40 +65,28 @@ class Order:
         return f"Order:: id: {self.id}, position_id: {self.position_id}, bot_id: {self.bot_id}, symbol: {self.symbol}, qty: {self.qty}, price: {self.price}, side: {self.side}, order type: '{self.order_type}' type: {self.type}, filled: {self.filled}, limit_price: {self.limit_price}, reduce_only: {self.reduce_only}, order_created_at: {self.order_created_at}, last_update_timestamp: {self.last_update_timestamp}, created_at: {self.created_at}{fills}"
     
 
-class Orders(object):
+class Orders(list[Order]):
     def __init__(self, orders: list[Order] = None) -> None:
-        self.orders = orders or []
-
-    def __iter__(self):
-        return iter(self.orders)
-
-    def __len__(self):
-        return len(self.orders)
-    
-    def __getitem__(self, i):
-        return self.orders[i]
+        super().__init__(orders or [])
     
     def last(self) -> Order:
-        return sorted(self.orders, key = lambda x: x.order_created_at)[-1]
+        return sorted(self, key = lambda x: x.order_created_at)[-1]
     
-    def append(self, order: Order) -> None:
-        self.orders.append(order)
-
     def for_position(self, position_id: Id) -> 'Orders':
-        return Orders([o for o in self.orders if o.position_id == position_id])
+        return Orders([o for o in self if o.position_id == position_id])
     
     def is_open(self):
         return not self.is_closed()
     
     def is_closed(self) -> bool:
-        return any(o for o in self.orders if o.is_close_order())
+        return any(o for o in self if o.is_close_order())
     
     def close_order(self) -> Order:
-        os = [o for o in self.orders if o.is_close_order()]
+        os = [o for o in self if o.is_close_order()]
         return os[0] if len(os) > 0 else None
     
     def accumulate_orders(self) -> 'Orders':
-        return Orders([o for o in self.orders if not o.is_close_order()])
+        return Orders([o for o in self if not o.is_close_order()])
     
     def total_qty(self) -> float:
         return float(sum([o.qty for o in self.accumulate_orders()]))
@@ -124,7 +112,7 @@ class Orders(object):
         return sum(ps) / qs if qs > 0 else 0
     
     def fills(self) -> Fills:
-        fills_list = [o.fills.fills for o in self.orders]
+        fills_list = [o.fills for o in self]
         return Fills(list(itertools.chain(*fills_list)))
     
     def set_fills(self, fills: Fills) -> None:
@@ -140,5 +128,5 @@ class Orders(object):
         return (profit, profit_pct)
 
     def __str__(self) -> str:
-        os = [f"{str(o.id)}: {o.order_type}" for o in self.orders]
-        return f"Orders:: {len(self.orders)} {os}"
+        os = [f"{str(o.id)}: {o.order_type}" for o in self]
+        return f"Orders:: {len(self)} {os}"

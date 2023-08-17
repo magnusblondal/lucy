@@ -6,7 +6,7 @@ from lucy.application.events import bus
 
 class SignalService:
     def handle(self, signal: SignalIncoming) -> tuple[bool, str]:
-        bot = BotRepository().fetch_bot(signal.bot_id)
+        bot = BotRepository().fetch(signal.bot_id)
         result = bot.handle(signal.to_model())
         bus.publish(bot.events())
         return result

@@ -15,7 +15,6 @@ from lucy.application.trading.exchange import Exchange
 from lucy.application.trading.strategy import Strategy
 from lucy.application.trading.pairs_usd_pf import *
 from lucy.main_logger import MainLogger
-import lucy.application.utils.dtm_utils as dtm
 from lucy.application.trading.pairs_usd_pf import *
 
 
@@ -70,21 +69,17 @@ class DcaBot(Bot):
             close)
     
     def tick(self, intervals: Intervals, exchange: Exchange):
-        # print('--------- Tick ----------')
-        # self.logger.info(f"Bot {self.name} {self.interval}")
         try:
             if not self.interval in intervals:
                 return
             
             # df = exchange.ohlc(self.symbol, self.interval.interval)
             symbol = pair_symbol(self.symbol)
-
             df = exchange.ohlc(symbol, self.interval, 'trade')
             if df.empty:
                 self.logger.warning(f"Bot {self.name} {self.interval} {symbol} df is empty, no ohlc data")
                 return
             
-            buy_messg = "______"
             # Ath hvort erum með position
             #   ef ekki, þá athuga hvort er entry event
             pair = pair_symbol(self.symbol)
@@ -186,14 +181,6 @@ class DcaBot(Bot):
     def _position(self, id: Id) -> Position:
         ps = [position for position in self.positions if position.id == id]
         return ps[0] if len(ps) > 0 else None
-    
-    
-    # def _position_for_signal(self, signal: Signal) -> Position:
-    #     if self.positions.is_empty():
-    #         return None
-    #     ps = [p for p in self.positions if p.fits_signal(signal)]
-    #     return ps[0] if len(ps) > 0 else None
-
     
     def _new_position(self, signal: Signal):
         print(f"-> Bot '{self.id}' handle '{signal.signal_type}' -- opna position")
@@ -306,3 +293,7 @@ class DcaBot(Bot):
         ds = '\n' + '\n'.join([f" {p}" for p in self.positions])  if self.has_positions() > 0 else "No Positions"
         shorts = "Allows shorts" if self.allow_shorts else "No shorts"
         return f"Bot {self.name} capital: {self.capital} entry size: {self.entry_size} so size: {self.so_size} max so's: {self.max_safety_orders} {shorts} {self.id}{ds}"
+
+class Bots(list[DcaBot]):
+    def __init__(self, bots: list[DcaBot] = None) -> None:
+        super().__init__(bots or [])

@@ -1,12 +1,6 @@
 
-from lucy.application.trading.feeds.fills import Fills
-from lucy.infrastructure.repos.fills_repository import FillsRepository
 from lucy.model.id import Id
-from lucy.model.order import Orders
-
-from lucy.model.trade import Trade
-from lucy.model.bot import DcaBot, Bot
-from lucy.model.position import Position, Positions
+from lucy.model.bot import Bots, DcaBot, Bot
 from lucy.model.interval import Interval
 from .repository import Repository
 from .position_repository import PositionRepository
@@ -33,11 +27,11 @@ class BotRepository(Repository):
             )
 
 
-    def fetch_bot(self, id: str) -> Bot:
+    def fetch(self, id: str) -> Bot:
         sql = '''
             SELECT * FROM bots WHERE id LIKE %s
             '''
-        values = (id + '%',)
+        values = (str(id) + '%',)
         result = self._fetch_one(sql, values)
         if result is None or len(result) == 0:
             return None        
@@ -53,11 +47,46 @@ class BotRepository(Repository):
             # position.orders         = orders.for_position(position.id)
             # position.orders.set_fills(fills.for_position(position.id) )
             position.orders         = OrderRepository().fetch_for_position(position.id)
-            # print(len(position.orders.fills()))
-            # print(position.orders.fills())
         return bot	
-        
-    def _fetch_em(self, sql: str) -> list[DcaBot]:
+    
+    def fetch_bots(self) -> Bots:
+        '''Fetch all bots'''
+        sql = '''
+            SELECT * FROM bots'''
+        return self._fetch_em(sql)
+    
+    def fetch_active_bots(self) -> list[DcaBot]:
+        '''Fetch all active bots'''
+        sql = '''
+            SELECT * FROM bots WHERE active = True
+            '''
+        return self._fetch_em(sql)
+
+    def add(self, bot: Bot) -> None:
+        if isinstance(bot, DcaBot):
+            self._save_dca_bot(bot)
+        else:
+            raise Exception('Bot type not supported')
+
+    def update(self, bot: Bot) -> None:
+        if isinstance(bot, DcaBot):
+            self._update_dca_bot(bot)
+        else:
+            raise Exception('Bot type not supported')
+    
+    def update_active(self, bot_id: Id, active: bool) -> None:
+        sql = '''
+            UPDATE bots
+            SET active = %s
+            WHERE id = %s
+            '''
+        values = (active, bot_id.id)
+        self._execute(sql, values)
+    
+
+    # region Private
+
+    def _fetch_em(self, sql: str) -> Bots:
         bots = []   
         result = self._fetch_all(sql)
 
@@ -70,22 +99,7 @@ class BotRepository(Repository):
                 position.signals = [signal for signal in signals if signal.position_id == position.id]
                 position.orders = orders.for_position(position.id)
             bots.append(bot)
-        return bots
-    
-    def fetch_bots(self) -> list[DcaBot]:
-        '''Fetch all bots'''
-        sql = '''
-            SELECT * FROM bots'''
-        return self._fetch_em(sql)
-    
-    def fetch_active_bots(self) -> list[DcaBot]:
-        '''Fetch all active bots'''
-        sql = '''
-            SELECT * FROM bots WHERE active = True
-            '''
-        return self._fetch_em(sql)
-    
-    
+        return Bots(bots)
 
     def _save_dca_bot(self, bot: DcaBot) -> None:
         sql = '''
@@ -99,12 +113,6 @@ class BotRepository(Repository):
                   bot.capital, bot.entry_size, bot.so_size, bot.max_safety_orders, 
                   bot.allow_shorts, bot.interval.interval, bot.symbol)
         self._execute(sql, values)
-
-    def save(self, bot: Bot) -> None:
-        if isinstance(bot, DcaBot):
-            self._save_dca_bot(bot)
-        else:
-            raise Exception('Bot type not supported')
 
     def _update_dca_bot(self, bot: DcaBot) -> None:
         sql = '''
@@ -121,17 +129,4 @@ class BotRepository(Repository):
                   bot.allow_shorts, bot.interval.interval, bot.symbol, bot.id.id)
         self._execute(sql, values)
 
-    def update(self, bot: Bot) -> None:
-        if isinstance(bot, DcaBot):
-            self._update_dca_bot(bot)
-        else:
-            raise Exception('Bot type not supported')
-    
-    def update_active(self, bot_id: Id, active: bool) -> None:
-        sql = '''
-            UPDATE bots
-            SET active = %s
-            WHERE id = %s
-            '''
-        values = (active, bot_id.id)
-        self._execute(sql, values)
+    #endregion

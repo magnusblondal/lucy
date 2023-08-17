@@ -20,7 +20,7 @@ class BotActivation(Usecase):
         if symbol is None:
             return self._all_off()
         
-        bot = BotRepository().fetch_bot(symbol)
+        bot = BotRepository().fetch(symbol)
         if bot is None:
             return BotActivationResult(False, current_state=False, bot=None)
         

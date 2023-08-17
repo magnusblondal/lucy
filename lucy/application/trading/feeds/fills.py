@@ -106,14 +106,13 @@ class Fill(DomainModel):
             True
         )
 
-class Fills(DomainModel):
-    fills: list[Fill]
+class Fills(list[Fill]):
     account: str
     '''The user account.'''
 
-    def __init__(self, fills = None, account: str = '') -> None:
+    def __init__(self, fills: list[Fill] = None, account: str = '') -> None:
+        super().__init__(fills or [])
         self.account = account
-        self.fills = fills or []
 
     @staticmethod
     def from_feed(data) -> 'Fills':
@@ -121,9 +120,9 @@ class Fills(DomainModel):
         return Fills([Fill.from_feed(fill) for fill in data['fills']], acc)
     
     def __str__(self) -> str:
-        fills = "\n  ".join([str(fill) for fill in self.fills[-3:]]) if len(self.fills) > 0 else ""
+        fills = "\n  ".join([str(fill) for fill in self[-3:]]) if len(self) > 0 else ""
         fills = f"\n  {fills}" if len(fills) > 0 else "No fills"
-        return f"Fills:: fills: {len(self.fills)} {fills}"
+        return f"Fills:: fills: {len(self)} {fills}"
     
     def update(self, data) -> list[Fill]:
         try:
@@ -132,17 +131,17 @@ class Fills(DomainModel):
                 return
             fs = [ Fill.from_feed(fill) for fill in data['fills'] ]
             for fill in fs:
-                self.fills.append(fill)
+                self.append(fill)
             return fs
         except Exception as e:
             print(f"Error updating fills: {e}")
             return []
     
     def for_position(self, position_id: Id) -> 'Fills':
-        return Fills([fill for fill in self.fills if fill.position_id == position_id])
+        return Fills([fill for fill in self if fill.position_id == position_id])
     
     def for_order(self, order_id: Id) -> 'Fills':
-        return Fills([fill for fill in self.fills if fill.order_id == order_id])
+        return Fills([fill for fill in self if fill.order_id == order_id])
     
     # def is_filled(self, order_id: Id) -> bool:
     #     o = self.for_order(order_id)
@@ -151,25 +150,14 @@ class Fills(DomainModel):
     #     return any([fill for fill in o if fill.remaining_order_qty == 0])
     
     def is_filled(self) -> bool:
-        return any([fill for fill in  self.fills if fill.remaining_order_qty == 0])
+        return any([fill for fill in  self if fill.remaining_order_qty == 0])
     
     def closing_fills(self) -> 'Fills':
-        return Fills([fill for fill in self.fills if fill.order_type == 'close'])
+        return Fills([fill for fill in self if fill.order_type == 'close'])
     
     def last(self) -> Fill:
-        return sorted(self.fills, key=lambda x: x.seq, reverse=False)[-1]
+        return sorted(self, key=lambda x: x.seq, reverse=False)[-1]
     
     def tail(self, cnt: int = 5) -> list[Fill]:
-        return sorted(self.fills, key=lambda x: x.seq, reverse=False)[-cnt:]
+        return sorted(self, key=lambda x: x.seq, reverse=False)[-cnt:]
     
-    def __iter__(self):
-        return iter(self.fills)
-    
-    def __len__(self) -> int:
-        return len(self.fills)
-    
-    def __getitem__(self, i):
-        return self.fills[i]
-    
-    def __iter__(self):
-        return iter(self.fills)

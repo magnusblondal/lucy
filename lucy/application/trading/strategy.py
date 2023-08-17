@@ -149,7 +149,7 @@ class Strategy(object):
         tp_signal       = df['tp_trigger'].iloc[-1]
         
         
-        tp_signal = True
+        # tp_signal = True
 
         if tp_signal:
             self._chart_tp(df, avg_price, pair, interval, rsi_col_name)

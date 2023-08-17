@@ -17,12 +17,12 @@ def all_bots():
 
 @router.get("/bots/{bot_id}")
 def bot(bot_id: str):
-    return {"data": BotRepository().fetch_bot(bot_id)}
+    return {"data": BotRepository().fetch(bot_id)}
 
 
 @router.get("/bots/{bot_id}/summary")
 def bot(bot_id: str):
-    bot = BotRepository().fetch_bot(bot_id)
+    bot = BotRepository().fetch(bot_id)
     positionsCnt = len(bot.positions)
     open_positions = bot.num_open_positions()
 
@@ -44,4 +44,4 @@ def bot(bot_id: str):
 @router.post("/bots", status_code = status.HTTP_201_CREATED)
 def create_bot(create_bot: CreateDcaBot):
     bot = DcaBot.create_new(create_bot)
-    BotRepository().save(bot)
+    BotRepository().add(bot)
