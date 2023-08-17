@@ -8,8 +8,17 @@ from lucy.model.interval import Interval
 from lucy.main_logger import MainLogger
 import lucy.application.trading.chart as chart
 from lucy.model.signal import Signal
+
 class EntrySignal(object):
     pass
+
+class StrategyFactory(object):
+    @staticmethod
+    def create(name: str) -> "Strategy":
+        if name == "BBbreakout":
+            return Strategy()
+        else:
+            raise ValueError(f"Strategy {name} not found")
 
 class Strategy(object):
     name: str = "BBbreakout"
@@ -32,15 +41,16 @@ class Strategy(object):
 
     def validate_entry(self, df: pd.DataFrame, pair: str, interval: Interval) -> Signal:
         # BBands
-        std_fast = 1.0
-        std_slow = 2.0
-        length = 55 # 15
-        mamode="sma" #"ema"
-        offset = 0
+        std_fast        = 1.0
+        std_slow        = 2.0
+        length          = 55 # 15
+        mamode          ="sma" #"ema"
+        offset          = 0
 
-        fast_ma_length = 100
-        slow_ma_length = 200
-        ma_type = "sma"
+        # Moving Averages
+        fast_ma_length  = 100
+        slow_ma_length  = 200
+        ma_type         = "sma"
 
         # Column names
         # - Moving Averages
@@ -82,31 +92,46 @@ class Strategy(object):
             },]
         )
         df.ta.strategy(strategy)
+        # fast ma is above slow ma
         df["up_trend"]          = df[fastMa] > df[slowMa]
+        # fast ma is crossing up over slow ma
         df["ema_cross_up"]      = (df[fastMa] > df[slowMa]) & (df[fastMa].shift() < df[slowMa].shift())
+        # fast ma is crossing down under slow ma
         df["ema_cross_down"]    = (df[fastMa] < df[slowMa]) & (df[fastMa].shift() > df[slowMa].shift())
+        # closing above fast upper band
         df["bb_breakout"]       = np.where(df['close'] > df[bbu].shift(), True, False)
+        # closing below slow upper band
         df["bb_within_slow"]    = np.where(df['close'] < df[bbu_slow].shift(), True, False)
+        # this is the first close above the fast upper band
         df["bb_signal"]         = (df['bb_breakout'] == True) & (df['bb_breakout'].shift() == False)
         
-        # are going up from basis, rather than down from beond the upper band
+        # are going up from basis, rather than down from beyond the upper band
         # coming down from above fast upper band
         df["bbu_slow_cross_down"]    = (df['close'] < df[bbu_slow]) & (df['close'].shift() > df[bbu_slow].shift())
+        
         # close crossing up over middle band
         df["bbm_cross_up"]    = (df['close'] > df[bbm]) & (df['close'].shift() < df[bbm].shift())
 
+        # setur indexinn (tímann) þegar förum upp yfir middle band
         df['counter_bbm_cross_up'] = df.index.where(df["bbm_cross_up"])
+        # fyllum inn með síðasta gildi
         df['counter_bbm_cross_up'].fillna(method="ffill", inplace=True)
 
+        # setur indexinn (tímann) þegar förum niður fyrir slow upper band
         df['counter_bbu_slow_cross_down'] = df.index.where(df.bbu_slow_cross_down)
         df['counter_bbu_slow_cross_down'].fillna(method="ffill", inplace=True)
+        # fá tímafildið til að geta gert timedelta reikninga
         df['date'] = pd.to_datetime(df.index)
+        # reikna hvað er langt frá því að fórum upp yfir middle band
         df['delta_bbm_cross_up']            = ( df['date'].sub(df['counter_bbm_cross_up']).astype('timedelta64[s]').dt.total_seconds() ) +1
+        # reikna hvað er langt frá því að fórum niður fyrir slow upper band
         df['delta_bbu_slow_cross_down']     = ( df['date'].sub(df['counter_bbu_slow_cross_down']).astype('timedelta64[s]').dt.total_seconds() ) +1
+        # fórum við síðast upp yfir middle band
         df['bbm_cross_up_last']             = df['delta_bbm_cross_up'] < df['delta_bbu_slow_cross_down'].fillna(float('inf'))
+        # drop columns
         df.drop(['counter_bbm_cross_up', 'counter_bbu_slow_cross_down', 'date'], axis=1,inplace=True)
         
-        # Uptrend and BB breakout and BB within slow
+        # Uptrend and BB breakout and BB within slow and coming up from fast basis
         df["entry_signal"]      = (df["up_trend"] == True) & (df["bb_signal"] == True) & (df["bb_within_slow"] == True) & (df["bbm_cross_up_last"] == True)
 
         entry_signal = df["entry_signal"].iloc[-1]

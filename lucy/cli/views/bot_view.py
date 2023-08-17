@@ -17,13 +17,14 @@ class BotView(View):
         if header:
             table.title = header
 
-        for c in ['Id', 'Name', 'Active', 'Symbol', 'Interval', 'Max pos.', 'Capital', 'Entry size', 'SO Size', 'Max SO\'s', 'Shorts', 'Tot. pos\'s', 'Open pos\'s', 'Profit']:
+        for c in ['Id', 'Name', 'Active', 'Strategy', 'Symbol', 'Interval', 'Max pos.', 'Capital', 'Entry size', 'SO Size', 'Max SO\'s', 'Shorts', 'Tot. pos\'s', 'Open pos\'s', 'Profit']:
             table.add_column(f"{self.COLUMN_HEADER_COL}{c}")
             
         for b in bots:
             capital             = "{:>10}".format(b.capital)
             interval            = "{:>5}".format(str(b.interval))
             symbol              = "{:>9}".format(b.symbol)
+            strategy            = "{:>9}".format(b.strategy.name)
             max_positions       = "{:>5}".format(b.num_positions_allowed)
             entry_size          = "{:>8}".format(f"{b.entry_size:.1f}")
             so_size             = "{:>7}".format(f"{b.so_size:.1f}")
@@ -33,12 +34,13 @@ class BotView(View):
             profit              = "{:>6}".format(f"${b.profit():.2f}") 
             is_active           = "{:>3}".format(self.open_or_closed(b.active))   
             allow_shorts        = "{:>3}".format(self.open_or_closed(b.allow_shorts))
-            table.add_row(b.id.id, self.emp(b.name), is_active, symbol, interval, max_positions, capital, entry_size, so_size, max_safety_orders, allow_shorts, posCnt, openPos, profit)
+            table.add_row(b.id.id, self.emp(b.name), is_active, strategy, symbol, interval, max_positions, capital, entry_size, so_size, max_safety_orders, allow_shorts, posCnt, openPos, profit)
         print(table)
 
     def show(self, bot: DcaBot, show_signals:bool, verbose: bool=False) -> None:
         is_active           = self.open("ACTIVE") if bot.active else self.closed("INACTIVE")
         symbol              = self.emp(bot.symbol)
+        strategy            = self.emp(bot.strategy.name)
         shorts              = "Shorts allowed" if bot.allow_shorts else "No shorts"
         pos                 = f"{bot.num_positions_allowed} {self.dim('concurrent positions.')}"
         cap                 = f"{self.dim('Capital:')} {bot.capital:.0f}"
@@ -46,7 +48,7 @@ class BotView(View):
         so_size             = f"{self.dim('SO Size:')} {bot.so_size:.0f}"
         max_safety_orders   = f"{self.dim('Max SOs:')} {bot.max_safety_orders}"
         id                  = self.dim(str(bot.id))
-        print(f"{self.emp(bot.name)}  {is_active} {symbol} {bot.interval} {pos}  {cap}  {entry_size}  {so_size}  {max_safety_orders}  {shorts}  {id}")
+        print(f"{self.emp(bot.name)}  {is_active} {strategy} {symbol} {bot.interval} {pos}  {cap}  {entry_size}  {so_size}  {max_safety_orders}  {shorts}  {id}")
         if bot.has_description() and verbose:
             self.desc(bot.description)
         

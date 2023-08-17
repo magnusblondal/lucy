@@ -19,6 +19,7 @@ class CreateDcaBot(CreateBot):
     interval: int
     symbol: str
     active: bool = True
+    strategy: str = 'BBbreakout'
 
 class EditDcaBot(CreateDcaBot):
     pass

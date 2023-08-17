@@ -1,20 +1,21 @@
--- DROP TABLE IF EXISTS bots CASCADE;
--- CREATE TABLE bots (
---   id                  TEXT              NOT NULL,
---   name                TEXT              NOT NULL,
---   description         TEXT              NULL,
---   active              boolean           DEFAULT false,
---   max_positions       INT               NOT NULL,
---   capital             NUMERIC           NOT NULL,
---   entry_size          NUMERIC           NOT NULL,
---   so_size             NUMERIC           NOT NULL,
---   max_safety_orders   INT               NOT NULL,
---   allow_shorts        boolean           DEFAULT false,
---   interval            INT               NOT NULL,
---   symbol              TEXT              NOT NULL,
---   created_at          timestamp         DEFAULT CURRENT_TIMESTAMP,
---   PRIMARY KEY (id)
--- );
+DROP TABLE IF EXISTS bots CASCADE;
+CREATE TABLE bots (
+  id                  TEXT              NOT NULL,
+  name                TEXT              NOT NULL,
+  description         TEXT              NULL,
+  active              boolean           DEFAULT false,
+  max_positions       INT               NOT NULL,
+  capital             NUMERIC           NOT NULL,
+  entry_size          NUMERIC           NOT NULL,
+  so_size             NUMERIC           NOT NULL,
+  max_safety_orders   INT               NOT NULL,
+  allow_shorts        boolean           DEFAULT false,
+  interval            INT               NOT NULL,
+  symbol              TEXT              NOT NULL,
+  strategy            TEXT              NOT NULL,
+  created_at          timestamp         DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+);
 
 
 DROP TABLE IF EXISTS positions CASCADE;

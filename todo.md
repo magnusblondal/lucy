@@ -1,5 +1,4 @@
 BUGS:
-Ef vantar fills, þá þarf að sækja
 SO er triggerað of hátt
 WS Connection dettur út
 
@@ -8,6 +7,12 @@ logger skrifar hverja færslu nokkrum sinnum
 
 
 TODOs:
+tengja strategy við bot - til að geta loadað dínamískt
+Tengja signal við order
+geta lokað position manually, ef ég hef lokað á vefsíðunni 
+  - tengja það við fill
+Ef vantar fills, þá þarf að sækja
+Runner sjái þegar verða breytingar á bot active state
 Færa api key í betra form
 
 -> hví þarf ég að rounda atom í heila tölu?

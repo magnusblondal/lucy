@@ -22,6 +22,7 @@ class BotController:
         type                = click.prompt('Type',                      type=str, default='DCA')
         active              = click.prompt('Active',                    type=bool, default=True)
         symbol              = click.prompt('Symbol',                    type=str, default='BTCUSD')
+        strategy            = click.prompt('Strategy',                  type=str, default='BBbreakout')
         interval            = click.prompt('Interval (1 5 15 60  240 (4h)  1440 (24h))',                  type=int,  default=60)
         max_positions       = click.prompt('Max Concurrent Positions',  type=int,  default=1)
         capital             = click.prompt('Capital',                   type=float)
@@ -41,7 +42,9 @@ class BotController:
             allow_shorts = allow_shorts,
             max_positions_allowed = max_positions,
             interval = interval,
-            symbol = symbol)
+            symbol = symbol,
+            active = active,
+            strategy = strategy)
 
         bot = DcaBot.create_new(gen)
         repo = BotRepository()
@@ -60,6 +63,7 @@ class BotController:
         name                = click.prompt('Name', type=str, default=bot.name)
         active              = click.prompt('Active', type=bool, default=bot.active)
         symbol              = click.prompt('Symbol',                    type=str, default=bot.symbol)
+        strategy            = click.prompt('Strategy',                  type=str, default=bot.strategy.name)
         interval            = click.prompt('Interval (1 5 15 60  240 (4h)  1440 (24h))', type=int,  default=bot.interval.interval)
         max_positions       = click.prompt('Max Concurrent Positions',  type=int,  default=bot.num_positions_allowed)
         capital             = click.prompt('Capital', type=float, default=bot.capital)
@@ -79,7 +83,8 @@ class BotController:
             allow_shorts = allow_shorts,
             max_positions_allowed = max_positions,
             interval = interval,
-            symbol = symbol)
+            symbol = symbol,
+            strategy=strategy)
         bot.update(edit)
 
         if click.confirm('Do you want to continue?', default=True, abort=True):

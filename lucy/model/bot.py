@@ -12,7 +12,7 @@ from lucy.model.id import *
 from lucy.application.events.event import DomainEvent
 from lucy.application.events.some_events import BotActiveStateChangedEvent
 from lucy.application.trading.exchange import Exchange
-from lucy.application.trading.strategy import Strategy
+from lucy.application.trading.strategy import Strategy, StrategyFactory
 from lucy.application.trading.pairs_usd_pf import *
 from lucy.main_logger import MainLogger
 from lucy.application.trading.pairs_usd_pf import *
@@ -43,7 +43,7 @@ class DcaBot(Bot):
     symbol: str
     
     def __init__(self, id: Id, name: str, description: str, active: bool, capital: float, entry_size: float, so_size: float, 
-                 max_safety_orders: int, allow_shorts: bool, num_positions_allowed: int, interval: Interval, symbol:str ) -> None:
+                 max_safety_orders: int, allow_shorts: bool, num_positions_allowed: int, interval: Interval, symbol:str, strategy:str = 'BBbreakout' ) -> None:
         super().__init__(id, name, description, active, num_positions_allowed)
         self.capital            = capital
         self.entry_size         = entry_size
@@ -54,7 +54,7 @@ class DcaBot(Bot):
         self.interval           = interval
         self.symbol             = symbol
         self.logger             = MainLogger.get_logger(__name__)
-        self.strategy           = Strategy()
+        self.strategy           = StrategyFactory.create(strategy)
         
     def _make_signal(self, type:str, time: datetime, close: float) -> Signal:
         return Signal.create_new(
@@ -153,7 +153,8 @@ class DcaBot(Bot):
                       bot.allow_shorts,
                       bot.max_positions_allowed,
                       Interval(bot.interval),
-                      bot.symbol)
+                      bot.symbol, 
+                      bot.strategy)
     
     def update(self, edit: EditDcaBot):
         self.name = edit.name
@@ -165,7 +166,8 @@ class DcaBot(Bot):
         self.allow_shorts = edit.allow_shorts
         self.num_positions_allowed = edit.max_positions_allowed
         self.interval = Interval(edit.interval)
-        self.symbol = edit.symbol
+        self.symbol = edit.symbol,
+        self.strategy = StrategyFactory.create(edit.strategy)
 
     def events(self) -> list[DomainEvent]:
         evs = self._events or []

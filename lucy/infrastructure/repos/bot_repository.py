@@ -39,13 +39,8 @@ class BotRepository(Repository):
         bot             = self._build(tuple(result))
         bot.positions   = PositionRepository().fetch_for_bot(bot.id)
         signals         = SignalRepository().fetch_for_bot(bot.id)
-        # orders          = OrderRepository().fetch_for_bot(bot.id)
-        # order_ids       = [order.id for order in orders]
-        # fills           = FillsRepository().fetch_for_orders(order_ids)
         for position in bot.positions:
             position.signals        = [signal for signal in signals if signal.position_id == position.id]
-            # position.orders         = orders.for_position(position.id)
-            # position.orders.set_fills(fills.for_position(position.id) )
             position.orders         = OrderRepository().fetch_for_position(position.id)
         return bot	
     
@@ -55,7 +50,7 @@ class BotRepository(Repository):
             SELECT * FROM bots'''
         return self._fetch_em(sql)
     
-    def fetch_active_bots(self) -> list[DcaBot]:
+    def fetch_active_bots(self) -> Bots:
         '''Fetch all active bots'''
         sql = '''
             SELECT * FROM bots WHERE active = True
@@ -80,7 +75,7 @@ class BotRepository(Repository):
             SET active = %s
             WHERE id = %s
             '''
-        values = (active, bot_id.id)
+        values = (active, str(bot_id))
         self._execute(sql, values)
     
 
@@ -104,14 +99,14 @@ class BotRepository(Repository):
     def _save_dca_bot(self, bot: DcaBot) -> None:
         sql = '''
             INSERT INTO bots
-            (id, name, description, active, max_positions, capital, entry_size, so_size, max_safety_orders, allow_shorts, interval, symbol)
+            (id, name, description, active, max_positions, capital, entry_size, so_size, max_safety_orders, allow_shorts, interval, symbol, strategy)
             VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             )
             '''
-        values = (bot.id.id, bot.name, bot.description, bot.active, bot.num_positions_allowed, 
+        values = (str(bot.id), bot.name, bot.description, bot.active, bot.num_positions_allowed, 
                   bot.capital, bot.entry_size, bot.so_size, bot.max_safety_orders, 
-                  bot.allow_shorts, bot.interval.interval, bot.symbol)
+                  bot.allow_shorts, bot.interval.interval, bot.symbol, bot.strategy.name)
         self._execute(sql, values)
 
     def _update_dca_bot(self, bot: DcaBot) -> None:
@@ -121,12 +116,12 @@ class BotRepository(Repository):
                 name = %s, description = %s, active = %s, max_positions = %s,
                 capital = %s, entry_size = %s, 
                 so_size = %s, max_safety_orders = %s, allow_shorts = %s,
-                interval = %s, symbol = %s
+                interval = %s, symbol = %s, strategy = %s
             WHERE id = %s
             '''
         values = (bot.name, bot.description, bot.active, bot.num_positions_allowed, 
                   bot.capital, bot.entry_size, bot.so_size, bot.max_safety_orders, 
-                  bot.allow_shorts, bot.interval.interval, bot.symbol, bot.id.id)
+                  bot.allow_shorts, bot.interval.interval, bot.symbol, str(bot.id), bot.strategy.name)
         self._execute(sql, values)
 
     #endregion
