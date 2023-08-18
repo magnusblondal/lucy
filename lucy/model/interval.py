@@ -101,3 +101,6 @@ class Intervals(object):
 
     def __contains__(self, interval: Interval):
         return interval in self.intervals
+
+    def has(self, interval: Interval):
+        return interval in self.intervals

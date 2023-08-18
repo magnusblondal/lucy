@@ -18,19 +18,19 @@ class BotController:
     def add(self):
         '''Add new Bot'''
         self.view.process_title("Add new bot")
-        name                = click.prompt('Name',                      type=str)
-        type                = click.prompt('Type',                      type=str, default='DCA')
-        active              = click.prompt('Active',                    type=bool, default=True)
-        symbol              = click.prompt('Symbol',                    type=str, default='BTCUSD')
-        strategy            = click.prompt('Strategy',                  type=str, default='BBbreakout')
-        interval            = click.prompt('Interval (1 5 15 60  240 (4h)  1440 (24h))',                  type=int,  default=60)
-        max_positions       = click.prompt('Max Concurrent Positions',  type=int,  default=1)
-        capital             = click.prompt('Capital',                   type=float)
-        entry_size          = click.prompt('Entry Size',                type=float)
-        so_size             = click.prompt('SO Size',                   type=float)
-        max_safety_orders   = click.prompt('Max Safety Orders',         type=int)
-        allow_shorts        = click.prompt('Allow Shorts',              type=bool, default=False)
-        desc                = click.prompt('Description',               type=str, default='')
+        name                = click.prompt('Name',                                          type=str)
+        type                = click.prompt('Type',                                          type=str,   default = 'DCA')
+        active              = click.prompt('Active',                                        type=bool,  default = True)
+        symbols             = click.prompt('Symbols (space or , separated)',                type=str,   default = 'BTCUSD')
+        strategy            = click.prompt('Strategy',                                      type=str,   default = 'BBbreakout')
+        interval            = click.prompt('Interval (1 5 15 60  240 (4h)  1440 (24h))',    type=int,   default = 60)
+        max_positions       = click.prompt('Max Concurrent Positions',                      type=int,   default = 1)
+        capital             = click.prompt('Capital',                                       type=float)
+        entry_size          = click.prompt('Entry Size',                                    type=float)
+        so_size             = click.prompt('SO Size',                                       type=float)
+        max_safety_orders   = click.prompt('Max Safety Orders',                             type=int)
+        allow_shorts        = click.prompt('Allow Shorts',                                  type=bool,  default = False)
+        desc                = click.prompt('Description',                                   type=str,   default = '')
 
         gen = CreateDcaBot(
             name = name,
@@ -42,7 +42,7 @@ class BotController:
             allow_shorts = allow_shorts,
             max_positions_allowed = max_positions,
             interval = interval,
-            symbol = symbol,
+            symbols = symbols,
             active = active,
             strategy = strategy)
 
@@ -60,18 +60,18 @@ class BotController:
             return
 
         self.view.process_title(f"Edit bot '{bot.name}' (id: {bot.id})")
-        name                = click.prompt('Name', type=str, default=bot.name)
-        active              = click.prompt('Active', type=bool, default=bot.active)
-        symbol              = click.prompt('Symbol',                    type=str, default=bot.symbol)
-        strategy            = click.prompt('Strategy',                  type=str, default=bot.strategy.name)
-        interval            = click.prompt('Interval (1 5 15 60  240 (4h)  1440 (24h))', type=int,  default=bot.interval.interval)
-        max_positions       = click.prompt('Max Concurrent Positions',  type=int,  default=bot.num_positions_allowed)
-        capital             = click.prompt('Capital', type=float, default=bot.capital)
-        entry_size          = click.prompt('Entry Size', type=float, default=bot.entry_size)
-        so_size             = click.prompt('SO Size', type=float, default=bot.so_size)
-        max_safety_orders   = click.prompt('Max Safety Orders', type=int, default=bot.max_safety_orders)
-        allow_shorts        = click.prompt('Allow Shorts', type=bool, default=bot.allow_shorts)
-        desc                = click.prompt('Description', type=str, default=bot.description)
+        name                = click.prompt('Name',                                          type=str,   default = bot.name)
+        active              = click.prompt('Active',                                        type=bool,  default = bot.active)
+        symbols             = click.prompt('Symbols (space or , separated)',                type=str,   default = str(bot.symbols))
+        strategy            = click.prompt('Strategy',                                      type=str,   default = bot.strategy.name)
+        interval            = click.prompt('Interval (1 5 15 60  240 (4h)  1440 (24h))',    type=int,   default = bot.interval.interval)
+        max_positions       = click.prompt('Max Concurrent Positions',                      type=int,   default = bot.num_positions_allowed)
+        capital             = click.prompt('Capital',                                       type=float, default = bot.capital)
+        entry_size          = click.prompt('Entry Size',                                    type=float, default = bot.entry_size)
+        so_size             = click.prompt('SO Size',                                       type=float, default = bot.so_size)
+        max_safety_orders   = click.prompt('Max Safety Orders',                             type=int,   default = bot.max_safety_orders)
+        allow_shorts        = click.prompt('Allow Shorts',                                  type=bool,  default = bot.allow_shorts)
+        desc                = click.prompt('Description',                                   type=str,   default = bot.description)
 
         edit = EditDcaBot(
             name = name,
@@ -83,7 +83,7 @@ class BotController:
             allow_shorts = allow_shorts,
             max_positions_allowed = max_positions,
             interval = interval,
-            symbol = symbol,
+            symbols = symbols,
             strategy=strategy)
         bot.update(edit)
 
@@ -105,6 +105,22 @@ class BotController:
         bot = self.repo.fetch(id)
         self.view.show(bot, signals, verbose)
 
+    def start_bot(self, id: str):
+        '''Start bot, sets bot to active'''
+        result = BotActivation().handle(id, True)
+        self._activation_callback(result, id, True)
+        
+    def stop_bot(self, id: str):
+        '''Stop bot, sets bot to inactive'''
+        result = BotActivation().handle(id, False)
+        self._activation_callback(result, id, False)
+    
+    def stop_all_bots(self):
+        '''Stop all bots'''
+        result = BotActivation().handle(None, False)
+        self._activation_callback(result, "all", False)
+    
+
     def _activation_callback(self, result, id: str, starting: bool):
         if result is None:
             self.view.warning(f"No results received.")
@@ -115,18 +131,3 @@ class BotController:
             self.view.confirmation(f"'{result.bot.name}' {msg}.")
         elif result.bot is None:
             self.view.warning(f"Bot with id '{id}' not found")
-
-    def start_bot(self, id: str):
-        '''Start bot'''
-        result = BotActivation().handle(id, True)
-        self._activation_callback(result, id, True)
-        
-    def stop_bot(self, id: str):
-        '''Stop bot'''
-        result = BotActivation().handle(id, False)
-        self._activation_callback(result, id, False)
-    
-    def stop_all_bots(self):
-        '''Stop all bots'''
-        result = BotActivation().handle(None, False)
-        self._activation_callback(result, "all", False)

@@ -27,7 +27,7 @@ class Runner(object):
 
     def start(self):
         '''Start Lucy'''
-        bots = [f"{b.name} {b.symbol} {b.interval}" for b in self.bots]
+        bots = [f"{b.name} {b.symbols} {b.interval}" for b in self.bots]
         mssg = "\n".join(bots)
         print(f"Starting Lucy. Listening for:\n{mssg}")
         while True:

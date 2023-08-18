@@ -17,7 +17,7 @@ class CreateDcaBot(CreateBot):
     allow_shorts: bool
     max_positions_allowed: int
     interval: int
-    symbol: str
+    symbols: str
     active: bool = True
     strategy: str = 'BBbreakout'
 

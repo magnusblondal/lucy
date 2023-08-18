@@ -2,6 +2,7 @@
 from lucy.model.id import Id
 from lucy.model.bot import Bots, DcaBot, Bot
 from lucy.model.interval import Interval
+from lucy.model.symbol import Symbols
 from .repository import Repository
 from .position_repository import PositionRepository
 from .signal_repository import SignalRepository
@@ -23,7 +24,7 @@ class BotRepository(Repository):
             max_safety_orders = int(row[8]),
             allow_shorts = row[9],
             interval = Interval(int(row[10])),
-            symbol = row[11]
+            symbols = Symbols.from_str(row[11])
             )
 
 
@@ -99,29 +100,31 @@ class BotRepository(Repository):
     def _save_dca_bot(self, bot: DcaBot) -> None:
         sql = '''
             INSERT INTO bots
-            (id, name, description, active, max_positions, capital, entry_size, so_size, max_safety_orders, allow_shorts, interval, symbol, strategy)
+            (id, name, description, active, max_positions, capital, entry_size, so_size, max_safety_orders, allow_shorts, interval, symbols, strategy)
             VALUES (
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             )
             '''
         values = (str(bot.id), bot.name, bot.description, bot.active, bot.num_positions_allowed, 
                   bot.capital, bot.entry_size, bot.so_size, bot.max_safety_orders, 
-                  bot.allow_shorts, bot.interval.interval, bot.symbol, bot.strategy.name)
+                  bot.allow_shorts, bot.interval.interval, str(bot.symbols), bot.strategy.name)
         self._execute(sql, values)
 
     def _update_dca_bot(self, bot: DcaBot) -> None:
+        print(bot.symbols)
         sql = '''
             UPDATE bots
             SET 
                 name = %s, description = %s, active = %s, max_positions = %s,
                 capital = %s, entry_size = %s, 
                 so_size = %s, max_safety_orders = %s, allow_shorts = %s,
-                interval = %s, symbol = %s, strategy = %s
+                interval = %s, symbols = %s, strategy = %s
             WHERE id = %s
             '''
         values = (bot.name, bot.description, bot.active, bot.num_positions_allowed, 
-                  bot.capital, bot.entry_size, bot.so_size, bot.max_safety_orders, 
-                  bot.allow_shorts, bot.interval.interval, bot.symbol, str(bot.id), bot.strategy.name)
+                  bot.capital, bot.entry_size, 
+                  bot.so_size, bot.max_safety_orders, bot.allow_shorts, 
+                  bot.interval.interval, str(bot.symbols), bot.strategy.name, str(bot.id))
         self._execute(sql, values)
 
     #endregion

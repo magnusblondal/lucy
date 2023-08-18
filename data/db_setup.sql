@@ -11,7 +11,7 @@ CREATE TABLE bots (
   max_safety_orders   INT               NOT NULL,
   allow_shorts        boolean           DEFAULT false,
   interval            INT               NOT NULL,
-  symbol              TEXT              NOT NULL,
+  symbols             TEXT              NOT NULL,
   strategy            TEXT              NOT NULL,
   created_at          timestamp         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
