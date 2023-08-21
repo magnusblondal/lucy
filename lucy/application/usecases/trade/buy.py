@@ -1,13 +1,11 @@
 
 from ..usecase import Usecase
-
-from lucy.application.trading.pairs_usd_pf import *
+from lucy.model.symbol import Symbol
 from lucy.application.trading.exchange import Exchange
 
 class Buy(Usecase):
-    def handle(self, symbol: str, qty: float):
+    def handle(self, symbol: Symbol, qty: float):
         '''Buy a symbol'''
-        s = pair_symbol(symbol)
-        order = Exchange().long_market(s, qty)
+        order = Exchange().long_market(Symbol, qty)
         return order            
     

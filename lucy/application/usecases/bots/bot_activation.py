@@ -4,23 +4,19 @@ from lucy.infrastructure.repos.bot_repository import BotRepository
 from lucy.model.bot import DcaBot
 import lucy.application.events.bus as bus
 
-class BotActivationResult:
-    success: bool
-    current_state: bool
-    bot: DcaBot
-
+class BotActivationResult(object):
+    
     def __init__(self, success: bool, current_state: bool, bot: DcaBot):
         self.success = success
         self.current_state = current_state
         self.bot = bot
 
 class BotActivation(Usecase):
-    def handle(self, symbol: str, turn_on: bool) -> BotActivationResult:
+    def handle(self, id: str, turn_on: bool) -> BotActivationResult:
         '''Turn Bot on or off'''
-        if symbol is None:
+        if id is None:
             return self._all_off()
-        
-        bot = BotRepository().fetch(symbol)
+        bot = BotRepository().fetch(id)
         if bot is None:
             return BotActivationResult(False, current_state=False, bot=None)
         

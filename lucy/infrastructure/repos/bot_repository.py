@@ -28,7 +28,7 @@ class BotRepository(Repository):
             )
 
 
-    def fetch(self, id: str) -> Bot:
+    def fetch(self, id: Id) -> Bot:
         sql = '''
             SELECT * FROM bots WHERE id LIKE %s
             '''

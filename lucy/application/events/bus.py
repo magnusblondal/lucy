@@ -9,7 +9,11 @@ from lucy.main_logger import MainLogger
 logger = MainLogger.get_logger(__name__)
 
 def publish(events: list[Event]) -> None:
-    # print(f"BUS publish: {len(events)} events")
+    if not events:
+        logger.info("BUS publish: No events to publish")
+        return
+    es = [type(e).__name__ for e in events]
+    logger.info(f"BUS publish: {len(events)} events: {' '.join(es)}")
     for ev in events:
         _publish(ev)
 
@@ -20,52 +24,57 @@ def _publish(event: Event) -> None:
     # Trading Signal
     # ---------
     if isinstance(event, SignalEvent):
-        # print(f"SignalEvent published: {event} {event.signal.id.id} <---")
+        logger.info(f"SignalEvent published: {event} {event.signal.id.id} <---")
         trading_signal_handler(event)
 
     # ---------
     # Position Entry Signal
     # ---------
-    if isinstance(event, PositionEntryEvent):
-        # print(f"PositionEntryEvent published: {event}")
+    elif isinstance(event, PositionEntryEvent):
+        logger.info(f"PositionEntryEvent published: {event}")
         position_entry_handler(event)
 
     # ---------
     # Add Funds Signal
     # ---------
-    if isinstance(event, AddFundsEvent):
-        # print(f"PositionEntryEvent published: {event}")
+    elif isinstance(event, AddFundsEvent):
+        logger.info(f"PositionEntryEvent published: {event}")
         add_funds_handler(event)
     
     # ---------
     # Position Exit Signal
     # ---------
-    if isinstance(event, PositionExitEvent):
-        # print(f"PositionEntryEvent published: {event}")
+    elif isinstance(event, PositionExitEvent):
+        logger.info(f"PositionEntryEvent published: {event}")
         position_exit_handler(event)
     
     # ---------
     # Order Created 
     # ---------
-    if isinstance(event, OrderCreatedEvent):
-        # print(f"OrderCreatedEvent published: {event}")
+    elif isinstance(event, OrderCreatedEvent):
+        logger.info(f"OrderCreatedEvent published: {event}")
         order_created_handler(event)
     
     # ---------
     # Profit Calculated
     # ---------
-    if isinstance(event, ProfitCalculatedEvent):
-        # print(f"ProfitCalculatedEvent published: {event}")
+    elif isinstance(event, ProfitCalculatedEvent):
+        logger.info(f"ProfitCalculatedEvent published: {event}")
         profit_calculated_handler(event)
 
     # ---------
     # 
     # ---------
-    if isinstance(event, BotActiveStateChangedEvent):
+    elif isinstance(event, BotActiveStateChangedEvent):
+        logger.info(f"BotActiveStateChangedEvent published: {event}")
         bot_active_state_changed_handler(event)
 
     # ---------
-    # 
+    # Order Filled
     # ---------
-    if isinstance(event, OrderFilledEvent):
+    elif isinstance(event, OrderFilledEvent):
+        logger.info(f"OrderFilledEvent published: {event}")
         order_filled_handler(event)
+
+    else:
+        logger.warning(f"Event not handled: {type(event).__name__}")

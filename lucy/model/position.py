@@ -10,28 +10,29 @@ from lucy.model.signal import Signal, Signals
 from lucy.application.events.some_events import PositionEntryEvent, AddFundsEvent, PositionExitEvent, SignalEvent, ProfitCalculatedEvent
 from lucy.application.events.order_events import OrderCreatedEvent
 from lucy.application.trading.exchange import Exchange
-from lucy.application.trading.pairs_usd_pf import *
 from lucy.application.trading.execution import Execution
 from lucy.application.events.event import DomainEvent
 from lucy.main_logger import MainLogger
 
 from rich import inspect
 
+from lucy.model.symbol import Symbol
+
 class Position(DomainModel):
     
-    def __init__(self, id: Id, bot_id: Id, symbol: str, side:str, 
+    def __init__(self, id: Id, bot_id: Id, symbol: Symbol, side:str, 
                  profit: float = 0.0, profit_pct:float = 0.0,
                  created_at: datetime = None) -> None:
-        self.logger = MainLogger.get_logger(__name__)
-        self.bot_id = bot_id
-        self.symbol = symbol
-        self.side = side
-        self.profit = profit
+        self.logger     = MainLogger.get_logger(__name__)
+        self.bot_id     = bot_id
+        self.symbol     = symbol if isinstance(symbol, Symbol) else Symbol(symbol)
+        self.side       = side
+        self.profit     = profit
         self.profit_pct = profit_pct
         self.created_at = created_at or None
-        self.orders = Orders()
-        self.signals = Signals()
-        self.exchange = Exchange()
+        self.orders     = Orders()
+        self.signals    = Signals()
+        self.exchange   = Exchange()
         super().__init__(id)
 
     def events(self) -> list[DomainEvent]:
@@ -50,7 +51,7 @@ class Position(DomainModel):
     # {'result': 'success', 'sendStatus': {'status': 'wouldNotReducePosition'}, 'serverTime': '2023-07-19T00:27:27.482Z'}
 
     def fits_signal(self, signal: Signal) -> bool:
-        same_symbols = self.symbol == pair_symbol(signal.ticker)
+        same_symbols = self.symbol == signal.ticker
         same_side = self.side == signal.side 
         return same_symbols and same_side and self.is_open()
     
@@ -171,8 +172,8 @@ class Position(DomainModel):
         avg_buy_price = self._avg_price(buys)
         avg_sell_price = self._avg_price(sells)
         price_diff = avg_sell_price - avg_buy_price
-        self.profit = price_diff * qty
-        self.profit_pct = (price_diff / avg_buy_price) * 100
+        self.profit = float(price_diff * qty)
+        self.profit_pct = float((price_diff / avg_buy_price) * 100)
 
         print(f"-> Position {self.id} audit -- profit {self.profit} {self.profit_pct}")
         self._this_just_happened(ProfitCalculatedEvent(self.id, self.bot_id, self.profit, self.profit_pct))
@@ -181,6 +182,9 @@ class Position(DomainModel):
         if not self.orders.is_close_filled():
             print(f"-> Position {self.id} audit -- position is open")
             return
+        profit, profit_pct, fees = self.orders.calculate_profit()
+        self.profit = profit
+        self.profit_pct = profit_pct
         self._this_just_happened(ProfitCalculatedEvent(self.id, self.bot_id, self.profit, self.profit_pct))
     
     def __str__(self) -> str:
@@ -196,18 +200,19 @@ class Positions(list[Position]):
         super().__init__(positions or [])
     
     def create_new(self, signal: Signal) -> 'Position':
-        symbol = pair_symbol(signal.ticker)
+        symbol = signal.ticker if isinstance(signal.ticker, Symbol) else Symbol(signal.ticker)
         p = Position(Id(), signal.bot_id, symbol, signal.side)
         self.append(p)
         return p
     
-    def has_open(self, symbol:str) -> tuple[bool, Position]:
+    def has_open(self, symbol: Symbol) -> tuple[bool, Position]:
+        symbol = symbol if isinstance(symbol, Symbol) else Symbol(symbol)
         for p in self:
             if p.symbol == symbol and p.is_open():
                 return (True, p)
         return (False, None)
     
-    def find_open_by_symbol(self, symbol:str) -> Position:
+    def find_open_by_symbol(self, symbol: Symbol) -> Position:
         return next((p for p in self if p.symbol == symbol and p.is_open()), None)
     
     def is_empty(self) -> bool:

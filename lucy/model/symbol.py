@@ -8,14 +8,21 @@ class Symbol(object):
             s = f"{s}usd"
         return s
     
-    def __str__(self) -> str:
-        return self.pf()
-    
     def token(self) -> str:
         '''Token part of the trading pair'''
         s = self.symbol[3:] if self.symbol[:3] == 'pf_' else self.symbol
         s = s[:-3] if s[-3:] == 'usd' else s
         return s
+    
+    def __eq__(self, o: object) -> bool:
+        if isinstance(o, str):
+            return str(self) == str(Symbol(o))
+        if isinstance(o, Symbol):
+            return str(self) == str(o)
+        return False
+            
+    def __str__(self) -> str:
+        return self.pf()
     
     @staticmethod
     def DOT():

@@ -8,22 +8,15 @@ from lucy.model.domain_model import DomainModel
 from lucy.model.position import Position, Positions
 from lucy.model.signal import Signal
 from lucy.model.interval import Interval, Intervals
-from lucy.model.id import *
-from lucy.model.symbol import Symbol, Symbols
+from lucy.model.id import Id
+from lucy.model.symbol import Symbols
 from lucy.application.events.event import DomainEvent
 from lucy.application.events.some_events import BotActiveStateChangedEvent
 from lucy.application.trading.exchange import Exchange
-from lucy.application.trading.strategy import Strategy, StrategyFactory
-from lucy.application.trading.pairs_usd_pf import *
+from lucy.application.trading.strategy import StrategyFactory
 from lucy.main_logger import MainLogger
-from lucy.application.trading.pairs_usd_pf import *
-
 
 class Bot(DomainModel):
-    name: str
-    description: str
-    active: bool
-    num_positions_allowed: int
 
     def __init__(self, id: Id, name: str, description: str, active: bool, num_positions_allowed: int) -> None:
         super().__init__(id)
@@ -33,16 +26,8 @@ class Bot(DomainModel):
         self.num_positions_allowed = num_positions_allowed
         
 
-class DcaBot(Bot):
-    # capital: float
-    # entry_size: float
-    # so_size: float
-    # max_safety_orders: int
-    # allow_shorts: bool
-    # positions: Positions
-    # interval: Interval
-    # symbol: str
-    
+class DcaBot(Bot):    
+
     def __init__(self, id: Id, name: str, description: str, active: bool, capital: float, entry_size: float, so_size: float, 
                  max_safety_orders: int, allow_shorts: bool, num_positions_allowed: int, interval: Interval, symbols: Symbols = None, strategy:str = 'BBbreakout' ) -> None:
         super().__init__(id, name, description, active, num_positions_allowed)
@@ -77,7 +62,7 @@ class DcaBot(Bot):
 
                 has_open, pos = self.positions.has_open(symbol)
                 if has_open:     
-                    PositionsView().debug(self.name, self.positions, 'check for exit')
+                    PositionsView().debug(self.name, symbol, self.positions, 'check for exit')
                     avg_entry_price = pos.average_price()
                     close_signal = self.strategy.validate_exit(df, avg_entry_price, symbol, self.interval)
 
@@ -177,8 +162,7 @@ class DcaBot(Bot):
         if self.positions is None:
             self.positions = Positions()
 
-        pair = pair_symbol(self.symbol)
-        has_open, pos = self.positions.has_open(pair)
+        has_open, pos = self.positions.has_open(signal.ticker)
         if has_open:
             print(f"-> Bot {self.id} handle {signal.signal_type} -- position already open for symbol {signal.ticker}")
             return

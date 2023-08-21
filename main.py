@@ -2,7 +2,6 @@ from kraken_futures_api import FuturesApi
 from decimal import Decimal
 from flex import Flex, FlexCurr
 import json
-from cli.services.trading.exchanges.pairs_usd_pf import *
 from cli.services.trading.exchange import Exchange
 from views.open_order_view import OpenOrderView
 from views.position_view import PositionsView

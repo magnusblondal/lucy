@@ -34,6 +34,7 @@ def order_created_handler(event: OrderCreatedEvent):
     OrderRepository().add(event.order)
 
 def profit_calculated_handler(event: ProfitCalculatedEvent):
+    logger.info(f"Profit Calculated Handler: {event}")
     PositionRepository().update_profit(event.position_id, event.profit, event.profit_percentage)
 
 def bot_active_state_changed_handler(event: BotActiveStateChangedEvent):

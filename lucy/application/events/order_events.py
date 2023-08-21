@@ -10,7 +10,7 @@ class OrderCreatedEvent(DomainEvent):
         self.order = order
 
 class OrderFilledEvent(DomainEvent):
-    def __init__(self, fill_id: str, order_id: str, is_order_filled) -> None:
+    def __init__(self, fill_id: str, order_id: str, is_order_filled: bool) -> None:
         super().__init__()
         self.fill_id = fill_id
         self.order_id = order_id

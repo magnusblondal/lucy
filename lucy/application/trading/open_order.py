@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import List, Optional
 from lucy.model.id import Id
 from lucy.model.order import Order
+from lucy.model.symbol import Symbol
 from .kraken_format import dtm
 
 @dataclass_json
@@ -57,7 +58,7 @@ class OrderEvent:
             id = Id(self.orderId),
             position_id = position_id,
             bot_id = bot_id,
-            symbol = self.symbol,
+            symbol = Symbol(self.symbol),
             qty = self.quantity,
             price = float(self.limitPrice),
             order_type = order_type,

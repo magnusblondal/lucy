@@ -7,7 +7,7 @@ logger skrifar hverja færslu nokkrum sinnum
 
 
 TODOs:
-tengja strategy við bot - til að geta loadað dínamískt
+Taka fees með i PnL reikninginn
 Tengja signal við order
 geta lokað position manually, ef ég hef lokað á vefsíðunni 
   - tengja það við fill

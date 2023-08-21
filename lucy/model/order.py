@@ -3,6 +3,7 @@ import itertools
 
 from lucy.application.trading.feeds.fills import Fills
 from lucy.model.id import Id
+from lucy.model.symbol import Symbol
 
 class Order:
     id: Id
@@ -22,7 +23,7 @@ class Order:
     exchange_id: str
     created_at: datetime
 
-    def __init__(self, id: Id, position_id: Id , bot_id: Id, symbol: str, 
+    def __init__(self, id: Id, position_id: Id , bot_id: Id, symbol: Symbol, 
                  qty: float, price: float, order_type: str,
                  side: str, type: str, filled: float, limit_price: float, reduce_only: bool, 
                  order_created_at: datetime , last_update_timestamp: datetime, exchange_id: str,
@@ -30,7 +31,7 @@ class Order:
         self.id                     = Id(id) if isinstance(id, str) else id 
         self.position_id            = position_id
         self.bot_id                 = bot_id
-        self.symbol                 = symbol
+        self.symbol                 = symbol if isinstance(symbol, Symbol) else Symbol(symbol)
         self.qty                    = qty
         self.price                  = float(price)
         self.order_type             = order_type
@@ -118,14 +119,19 @@ class Orders(list[Order]):
     def set_fills(self, fills: Fills) -> None:
         self.fills = fills
 
-    def calculate_profit(self) -> tuple[float, float]:
-        buy_price = self.avg_accumulation_fill_price()
-        sell_price = self.avg_close_fill_price()
-        qty = self.total_qty()
-        price_diff = sell_price - buy_price
-        profit = price_diff * qty
-        profit_pct = (price_diff / buy_price) * 100
-        return (profit, profit_pct)
+    def total_fees(self) -> float:
+        return sum([f.fee_paid for f in self.fills()])
+    
+    def calculate_profit(self) -> tuple[float, float, float]:
+        fees = self.total_fees()
+        buy_price   = self.avg_accumulation_fill_price()
+        sell_price  = self.avg_close_fill_price()
+        qty         = self.total_qty()
+        price_diff  = sell_price - buy_price
+        profit      = (price_diff * qty) - fees
+        profit_pct  = profit / (buy_price * qty) * 100
+        return (profit, profit_pct, fees)
+    
 
     def __str__(self) -> str:
         os = [f"{str(o.id)}: {o.order_type}" for o in self]

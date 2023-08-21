@@ -1,6 +1,7 @@
 from aiosignal import Signal
 
 from lucy.model.id import Id
+from lucy.model.symbol import Symbol
 from .event import DomainEvent
 
 class SignalEvent(DomainEvent):
@@ -17,17 +18,11 @@ class SignalEvent(DomainEvent):
         return f"SignalEvent:: Bot: {self.bot_id}  Signal: {self.signal}"
     
 class PositionEntryEvent(DomainEvent):
-    position_id: Id
-    bot_id: Id
-    symbol: str
-    qty: float
-    side: str
-
-    def __init__(self, position_id: Id, bot_id: Id, symbol: str, qty: float, side: str) -> None:
+    def __init__(self, position_id: Id, bot_id: Id, symbol: Symbol, qty: float, side: str) -> None:
         super().__init__()
         self.position_id = position_id
         self.bot_id = bot_id
-        self.symbol = symbol
+        self.symbol = symbol if isinstance(symbol, Symbol) else Symbol(symbol)
         self.qty = qty
         self.side = side
     
@@ -36,10 +31,6 @@ class PositionEntryEvent(DomainEvent):
 
 
 class AddFundsEvent(DomainEvent):
-    position_id: Id
-    bot_id: Id
-    amount: float    
-    
     def __init__(self, position_id: Id, bot_id: Id, amount: float) -> None:
         super().__init__()
         self.position_id = position_id
@@ -49,9 +40,7 @@ class AddFundsEvent(DomainEvent):
     def __str__(self) -> str:
         return super().__str__() + f"AddFundsEvent:: Bot: {self.bot_id}  Amount: {self.amount}"
 
-class PositionExitEvent(DomainEvent):
-    position_id: Id
-    
+class PositionExitEvent(DomainEvent):   
     def __init__(self, position_id: Id) -> None:
         super().__init__()
         self.position_id = position_id
@@ -60,17 +49,12 @@ class PositionExitEvent(DomainEvent):
         return super().__str__() + f"PositionExitEvent:: Position: {self.position_id}"
 
 class ProfitCalculatedEvent(DomainEvent):
-    position_id: Id
-    bot_id: Id
-    profit: float
-    profit_percentage: float
-
     def __init__(self, position_id: Id, bot_id: Id, profit: float, profit_pct: float) -> None:
         super().__init__()
         self.position_id = position_id
         self.bot_id = bot_id
-        self.profit = profit
-        self.profit_percentage = profit_pct
+        self.profit = float(profit)
+        self.profit_percentage = float(profit_pct)
     
     def __str__(self) -> str:
         return super().__str__() + f"ProfitCalculatedEvent:: Position: {self.position_id}  Bot: {self.bot_id}  Profit: ${self.profit} - {self.profit_percentage}%"

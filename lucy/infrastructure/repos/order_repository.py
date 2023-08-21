@@ -1,5 +1,6 @@
 from lucy.model.id import Id
 from lucy.model.order import Order, Orders
+from lucy.model.symbol import Symbol
 from .repository import Repository
 from .fills_repository import FillsRepository
 
@@ -9,7 +10,7 @@ class OrderRepository(Repository):
             id = row[0],
             position_id = Id(id = row[1]),
             bot_id = Id(id = row[2]),
-            symbol = row[3],
+            symbol = Symbol(row[3]),
             qty = row[4],
             price = row[5],
             order_type = row[6],
@@ -82,7 +83,7 @@ class OrderRepository(Repository):
         values = (str(order.id),
                   str(order.position_id),
                   str(order.bot_id), 
-                  order.symbol, 
+                  str(order.symbol), 
                   order.qty, 
                   order.price,
                   order.order_type,

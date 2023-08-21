@@ -1,16 +1,21 @@
 from lucy.model.id import Id
 from lucy.model.position import Position, Positions
+from lucy.model.symbol import Symbol
 from .repository import Repository
 from .fills_repository import FillsRepository
 from .order_repository import OrderRepository
 from .signal_repository import SignalRepository
+from lucy.main_logger import MainLogger
 
 class PositionRepository(Repository):
+    def __init__(self):
+        self.logger = MainLogger.get_logger(__name__)
+
     def _build(self, row) -> Position:
         return Position(
             id          = Id( row[0]),
             bot_id      = Id(row[1]),
-            symbol      = row[2],
+            symbol      = Symbol(row[2]),
             side        = row[3],
             profit      = row[4],
             profit_pct  = row[5],
@@ -50,7 +55,7 @@ class PositionRepository(Repository):
             return None
         return self._fetch_data(pos)
 
-    def add(self, position_id: Id, bot_id: Id, symbol: str, side: str) -> None:
+    def add(self, position_id: Id, bot_id: Id, symbol: Symbol, side: str) -> None:
         sql = '''
             INSERT INTO positions (
             id, bot_id, symbol, profit, profit_pct, side
@@ -61,13 +66,14 @@ class PositionRepository(Repository):
             '''
         values = (str(position_id), 
                   str(bot_id), 
-                  symbol, 
+                  str(symbol), 
                   0, 
                   0, 
                   side)
         self._execute(sql, values)
 
     def update_profit(self, position_id: Id, profit: float, profit_pct: float) -> None:
+        self.logger.info(f"PositionRepository.update_profit: {position_id} {profit} {profit_pct}")
         sql = '''
             UPDATE positions SET profit = %s, profit_pct = %s WHERE id = %s
             '''

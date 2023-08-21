@@ -1,5 +1,7 @@
 import json
 
+from rich import inspect
+
 from lucy.application.usecases.trade.order_filled import OrderFilled
 
 from .ticker_lite import TickerLite

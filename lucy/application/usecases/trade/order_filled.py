@@ -4,8 +4,6 @@ from lucy.infrastructure.repos.fills_repository import FillsRepository
 from lucy.model.id import Id
 from ..usecase import Usecase
 import lucy.application.events.bus as bus
-from lucy.application.trading.pairs_usd_pf import *
-import lucy.application.events.bus as bus
 from lucy.main_logger import MainLogger
 
 class OrderFilledResult:
@@ -28,7 +26,7 @@ class OrderFilled(Usecase):
         for fill in fills:
             FillsRepository().add(fill)
             evs = fill.events()
-            print(f"OrderFilled: publishing {evs}")
+        # print(f"OrderFilled: publishing {len(evs)} : {evs}")
         bus.publish(evs)
         ids = [fill.order_id for fill in fills]
         result =  OrderFilledResult(True, ids)

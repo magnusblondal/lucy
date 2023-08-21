@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import click
 
-from lucy.application.trading.pairs_usd_pf import *
 from lucy.application.trading.exchange import Exchange
 import lucy.application.trading.futures_socket_connector as web_socket_api
 
@@ -12,6 +11,8 @@ from lucy.cli.controllers.order_controller import OrderController
 from lucy.cli.controllers.runner import Runner
 
 from rich import inspect
+
+from lucy.model.symbol import Symbol
 
 def _positions():
     positions = Exchange().positions()
@@ -78,7 +79,7 @@ def sell(symbol, qty):
 @cli.command(help='Close position by symbol')
 @click.argument('symbol')
 def close(symbol):
-    OrderController().close(symbol)
+    OrderController().close(Symbol(symbol))
 
 # ----------
 # Limit Order

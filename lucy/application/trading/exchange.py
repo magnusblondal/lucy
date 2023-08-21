@@ -6,6 +6,7 @@ from typing import List
 import pandas as pd
 
 from lucy.model.interval import Interval
+from lucy.model.symbol import Symbol
 
 from .flex import Account
 from .kraken_futures_api import FuturesApi
@@ -36,20 +37,20 @@ class Exchange:
         self.kraken_api     = KrakenApi()
         self.logger         = MainLogger.get_logger(__name__)
     
-    def long_market(self, symbol: str, size: float, client_order_id: str="", reduce_only: bool=False) -> OrderResults:
+    def long_market(self, symbol: Symbol, size: float, client_order_id: str="", reduce_only: bool=False) -> OrderResults:
         return self._place_market_order(symbol, 'buy', size, client_order_id, reduce_only)
 
-    def short_market(self, symbol: str, size: float, client_order_id: str="", reduce_only: bool=False):
+    def short_market(self, symbol: Symbol, size: float, client_order_id: str="", reduce_only: bool=False):
         return self._place_market_order(symbol, 'sell', size, client_order_id, reduce_only)
 
-    def long_lmt(self, symbol: str, size: float, limit_price: float, stop_price: float = None, client_order_id: str="") -> OrderResults:
+    def long_lmt(self, symbol: Symbol, size: float, limit_price: float, stop_price: float = None, client_order_id: str="") -> OrderResults:
         orderType = OrderType.LIMIT if stop_price is None else OrderType.STOP
         return self._place_limit_order(symbol, 'buy', size, limit_price, client_order_id)
 
-    def short_lmt(self, symbol: str, size: float, limit_price: float, client_order_id: str="") -> OrderResults:
+    def short_lmt(self, symbol: Symbol, size: float, limit_price: float, client_order_id: str="") -> OrderResults:
         return self._place_limit_order(symbol, 'sell', size, limit_price, client_order_id)
     
-    def _place_market_order(self, symbol, side, size, client_order_id: str="", reduce_only: bool=False) -> OrderResults:
+    def _place_market_order(self, symbol: Symbol, side: str, size: float, client_order_id: str="", reduce_only: bool=False) -> OrderResults:
         self.logger.info(f"Placing market order {side} {size} {symbol}")
         return self._place_order(OrderType.MARKET, symbol, side, size, limit_price=None, 
                                 client_order_id=client_order_id, reduce_only=reduce_only)
@@ -57,13 +58,13 @@ class Exchange:
         #         Sell Market pf_ethusd 0.05235602094240838
 
 
-    def _place_limit_order(self, symbol: str, side: str, size: float, limit_price: float, client_order_id: str="") -> OrderResults:
+    def _place_limit_order(self, symbol: Symbol, side: str, size: float, limit_price: float, client_order_id: str="") -> OrderResults:
         return self._place_order(OrderType.LIMIT, symbol, side, size, limit_price, client_order_id)
 
 
-    def _place_order(self, order_type: OrderType, symbol: str, side: str, size: float, limit_price: float, 
+    def _place_order(self, order_type: OrderType, symbol: Symbol, side: str, size: float, limit_price: float, 
                      client_order_id: str="", reduce_only: bool=False) -> OrderResults:
-        order = self.futures_api.send_order(order_type.value, symbol, side, size, limit_price, stopPrice=None, 
+        order = self.futures_api.send_order(order_type.value, str(symbol), side, size, limit_price, stopPrice=None, 
                                             clientOrderId=client_order_id, reduce_only=reduce_only)
         res = json.loads(order)
         results = self._parse_order_results(res)
@@ -107,11 +108,11 @@ class Exchange:
         '''
         self.futures_api.cancel_order(order_id)
 
-    def cancel_for_symbol(self, symbol):
+    def cancel_for_symbol(self, symbol: Symbol):
         '''
         Hætta við öll tilboð fyrir tiltekið symbol
         '''
-        self.futures_api.cancel_all_orders(symbol)
+        self.futures_api.cancel_all_orders(str(symbol))
 
     def cancel_all(self) -> None:
         '''Hætta við öll tilboð'''
@@ -218,7 +219,7 @@ class Exchange:
         res = json.loads(res)
         return Instruments([Instrument.from_kraken(i) for i in res['instruments']])
     
-    def ohlc(self, symbol: str, interval: Interval, tick_type: str="trade", since: int = 0) -> pd.DataFrame:
+    def ohlc(self, symbol: Symbol, interval: Interval, tick_type: str="trade", since: int = 0) -> pd.DataFrame:
         '''
         tick_type:  "spot", "mark", "trade"
         from_time:  epoch timestamp

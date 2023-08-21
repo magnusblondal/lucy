@@ -7,6 +7,7 @@ from lucy.cli.views.fill_view import FillsView
 from lucy.cli.views.order_view import OrderView
 from lucy.cli.views.signal_view import SignalView
 from lucy.model.position import Position, Positions
+from lucy.model.symbol import Symbol
 
 from .view import View
 
@@ -54,10 +55,10 @@ class PositionsView(View):
         posStr = f"{open_closed} {position.symbol} {self.dim('Side:')} {position.side} {qty} {profit}  {id} {verb}"
         print(self.indent(posStr))
 
-    def debug(self, bot: str, symbol: str, positions: Positions, mssg: str) -> None:
+    def debug(self, bot: str, symbol: Symbol, positions: Positions, mssg: str) -> None:
         bot = self.emp(bot)
         name = "{:<10}".format(bot)       
-        sym  = "{:<10}".format(symbol) 
+        sym  = "{:<10}".format(str(symbol)) 
         pos = "{:<2}".format(len(positions))
         opn = "{:<2}".format(positions.num_open())
         open = self.dim('Open:', opn)

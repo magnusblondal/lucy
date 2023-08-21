@@ -41,17 +41,5 @@ class Runner(object):
                 bot.tick(intervals, self.exchange)
                 bus.publish(bot.events())
             except Exception as e:
-                self.logger.error(f"Tick: Error in bot {bot.name} {bot.symbol} {bot.interval}", exc_info=True)
+                self.logger.error(f"Tick: Error in bot {bot.name} {bot.interval}", exc_info=True)
                 self.logger.error(e)
-    
-    # def tick(self):
-    #     events = []
-    #     intervals = Intervals(datetime.now())
-    #     for bot in self.bots:
-    #         try:
-    #             bot.tick(intervals, self.exchange)
-    #             events.extend(bot.events())
-    #         except Exception as e:
-    #             self.logger.error(f"Tick: Error in bot {bot.name} {bot.symbol} {bot.interval}", exc_info=True)
-    #             self.logger.error(e)
-    #     bus.publish(events)

@@ -57,14 +57,14 @@ class Fill(DomainModel):
         # self.id                     = fill_id
         self.instrument             = instrument
         self.time                   = time
-        self.price                  = price
+        self.price                  = float(price)
         self.seq                    = 0
         self.buy                    = buy
         self.qty                    = float(qty)
         self.remaining_order_qty    = remaining_order_qty
         self.order_id               = order_id
         self.fill_type              = fill_type
-        self.fee_paid               = fee_paid
+        self.fee_paid               = float(fee_paid)
         self.fee_currency           = fee_currency
         self.taker_order_type       = taker_order_type
         self.order_type             = order_type
