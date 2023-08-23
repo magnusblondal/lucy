@@ -74,6 +74,7 @@ class Position(DomainModel):
             order = self._create_buy_order(qty, order_type)
         else:
             order = self._create_sell_order(qty, order_type)  
+        order.signal = signal
         self.orders.append(order)
         return order
 
@@ -82,7 +83,7 @@ class Position(DomainModel):
         qty = entry_size / signal.close
         qty = round(qty, 0)
         order = self._handle_order(signal, qty, 'entry')
-        self._this_just_happened(PositionEntryEvent(position_id=self.id, bot_id=self.bot_id, symbol=self.symbol, qty=qty, side=self.side))
+        self._this_just_happened(PositionEntryEvent(self.id, self.bot_id, self.symbol, qty, self.side))
         self._this_just_happened(OrderCreatedEvent(order))
         # self._this_just_happened(OrderCreatedEvent(self.id, self.bot_id, 'entry', order))
 

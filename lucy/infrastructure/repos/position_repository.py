@@ -2,7 +2,6 @@ from lucy.model.id import Id
 from lucy.model.position import Position, Positions
 from lucy.model.symbol import Symbol
 from .repository import Repository
-from .fills_repository import FillsRepository
 from .order_repository import OrderRepository
 from .signal_repository import SignalRepository
 from lucy.main_logger import MainLogger

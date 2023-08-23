@@ -2,6 +2,7 @@ from rich import inspect, print
 from rich.table import Table
 from lucy.application.trading.feeds.fills import Fills
 from lucy.cli.views.fill_view import FillsView
+from lucy.cli.views.signal_view import SignalView
 
 from lucy.model.order import Order, Orders
 from .view import View
@@ -16,13 +17,15 @@ class OrderView(View):
         mssg = f"{s} {ss}"
         print(self.indent(mssg, indents))
 
-    def lines(self, orders: Orders, indents:int = 0, verbose:bool = False) -> None:
+    def lines(self, orders: Orders, indents:int = 0, verbose:bool = False, show_signals:bool = False) -> None:
         fillsView = FillsView()
         self.summary(orders, indents, verbose)
         for o in sorted(orders, key=lambda o: o.created_at):
             self._line(o, indents, verbose)
             for f in o.fills:
                 fillsView.line(f, indents, verbose, self.dim("Fill:"))
+            if show_signals:
+                SignalView().line(o.signal, indents, verbose)
 
     def _line(self, order: Order, indents: int = 0, verbose:bool = False):
         o = order

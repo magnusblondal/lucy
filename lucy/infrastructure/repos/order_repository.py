@@ -1,3 +1,5 @@
+from rich import inspect
+from lucy.infrastructure.repos.signal_repository import SignalRepository
 from lucy.model.id import Id
 from lucy.model.order import Order, Orders
 from lucy.model.symbol import Symbol
@@ -8,21 +10,23 @@ class OrderRepository(Repository):
     def _build(self, row) -> Order:
         return Order(
             id = row[0],
-            position_id = Id(id = row[1]),
-            bot_id = Id(id = row[2]),
-            symbol = Symbol(row[3]),
-            qty = row[4],
-            price = row[5],
-            order_type = row[6],
-            side = row[7],
-            type = row[8],
-            filled = row[9],
-            limit_price = row[10],
-            reduce_only = row[11],
-            order_created_at = row[12],
-            last_update_timestamp = row[13],
-            exchange_id = row[14],
-            created_at = row[15]
+            position_id             = Id(row[1]),
+            bot_id                  = Id(row[2]),
+            symbol                  = Symbol(row[4]),
+            qty                     = row[5],
+            price                   = row[6],
+            order_type              = row[7],
+            side                    = row[8],
+            type                    = row[9],
+            filled                  = row[10],
+            limit_price             = row[11],
+            reduce_only             = row[12],
+            order_created_at        = row[13],
+            last_update_timestamp   = row[14],
+            exchange_id             = row[15],
+            created_at              = row[16],
+
+            signal = SignalRepository().fetch(Id(row[3]))
         )
     
     def fetch(self, id: Id) -> Order:
@@ -63,6 +67,7 @@ class OrderRepository(Repository):
                 id,
                 position_id, 
                 bot_id,
+                signal_id,
                 symbol, 
                 qty, 
                 price, 
@@ -77,12 +82,15 @@ class OrderRepository(Repository):
                 exchange_id
             )
             VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, 
+                %s, %s, %s, %s, %s, 
+                %s, %s, %s, %s, %s, %s
             )
             '''
         values = (str(order.id),
                   str(order.position_id),
                   str(order.bot_id), 
+                  str(order.signal.id),
                   str(order.symbol), 
                   order.qty, 
                   order.price,
@@ -99,4 +107,5 @@ class OrderRepository(Repository):
 
     def _fetch_data(self, order: Order) -> Order:
         order.fills = FillsRepository().fetch_for_order(order.id)
+        # order.signal = SignalRepository().fetch_for_order(order.id)
         return order

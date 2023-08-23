@@ -38,13 +38,9 @@ class PositionsView(View):
         self.summary(positions, indents)
         for pos in sorted(positions, key=lambda p: p.created_at):
             self.line(pos, indents, verbose)
-                        
-            # --- Signals ---
-            if show_signals:
-                SignalView().lines(pos.signals, indents + 1, verbose)
-            
+                       
             # --- Orders ---
-            OrderView().lines(pos.orders, indents + 1, verbose)
+            OrderView().lines(pos.orders, indents + 1, verbose, show_signals)
 
     def line(self, position: Position, indents:int = 0, verbose:bool = False) -> None:
         open_closed = self.open_or_closed(position.is_open(), False) 

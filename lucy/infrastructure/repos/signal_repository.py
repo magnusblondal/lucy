@@ -36,7 +36,7 @@ class SignalRepository(Repository):
         sql = '''
             SELECT * FROM signals WHERE id = %s
             '''
-        values = (id.id,)
+        values = (str(id),)
         result = self._fetch_one(sql, values)
         return self._build(result)
 
@@ -51,6 +51,6 @@ class SignalRepository(Repository):
         sql = '''
             SELECT * FROM signals WHERE bot_id = %s
             '''
-        values = (bot_id.id,)
+        values = (str(bot_id),)
         res = self._fetch_all(sql, values)
         return Signals([self._build(row) for row in res])

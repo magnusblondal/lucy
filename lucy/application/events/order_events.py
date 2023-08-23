@@ -1,4 +1,5 @@
 # from lucy.model.order import Order
+from lucy.model.id import Id
 from .event import DomainEvent
 
 class OrderCreatedEvent(DomainEvent):

@@ -55,6 +55,7 @@ CREATE TABLE orders (
   id                    TEXT              NOT NULL,
   position_id           TEXT              NOT NULL,
   bot_id                TEXT              NOT NULL,
+  signal_id             TEXT              NOT NULL,
   symbol                TEXT              NOT NULL,
   qty                   NUMERIC           NOT NULL,
   price                 NUMERIC           NOT NULL,

@@ -3,6 +3,7 @@ import itertools
 
 from lucy.application.trading.feeds.fills import Fills
 from lucy.model.id import Id
+from lucy.model.signal import Signal
 from lucy.model.symbol import Symbol
 
 class Order:
@@ -27,11 +28,11 @@ class Order:
                  qty: float, price: float, order_type: str,
                  side: str, type: str, filled: float, limit_price: float, reduce_only: bool, 
                  order_created_at: datetime , last_update_timestamp: datetime, exchange_id: str,
-                 created_at: datetime, fills: Fills = None) -> None:
-        self.id                     = Id(id) if isinstance(id, str) else id 
-        self.position_id            = position_id
-        self.bot_id                 = bot_id
-        self.symbol                 = symbol if isinstance(symbol, Symbol) else Symbol(symbol)
+                 created_at: datetime, fills: Fills = None, signal: Signal = None) -> None:
+        self.id                     = Id(id)            if isinstance(id, str)          else id 
+        self.position_id            = Id(position_id)   if isinstance(position_id, str) else position_id
+        self.bot_id                 = Id(bot_id)        if isinstance(bot_id, str)      else bot_id
+        self.symbol                 = Symbol(symbol)    if isinstance(symbol, str)      else symbol
         self.qty                    = qty
         self.price                  = float(price)
         self.order_type             = order_type
@@ -45,6 +46,7 @@ class Order:
         self.exchange_id            = exchange_id
         self.created_at             = created_at
         self.fills                  = fills or Fills()
+        self.signal                 = signal
 
     def is_close_order(self) -> bool:
         return self.order_type == "close"
