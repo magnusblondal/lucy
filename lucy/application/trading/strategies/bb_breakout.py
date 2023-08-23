@@ -8,21 +8,14 @@ from lucy.model.interval import Interval
 from lucy.main_logger import MainLogger
 import lucy.application.trading.chart as chart
 from lucy.model.signal import Signal
+from .strategy import Strategy
 
 class EntrySignal(object):
     pass
 
-class StrategyFactory(object):
-    @staticmethod
-    def create(name: str) -> "Strategy":
-        if name == "BBbreakout":
-            return Strategy()
-        else:
-            raise ValueError(f"Strategy {name} not found")
-
-class Strategy(object):
-    name: str = "BBbreakout"
+class BBbreakout(Strategy):
     def __init__(self):
+        super().__init__(self.__class__.__name__)
         self.target = 1.0
         self.add_funds_threshold = 1.0
         self.logger = MainLogger.get_logger(__name__)
@@ -138,7 +131,7 @@ class Strategy(object):
         time = df.index[-1].to_pydatetime() # type: ignore 
         close = df["close"].iloc[-1]
         
-        entry_signal = True
+        # entry_signal = True
         
         if entry_signal:
             self._chart_entry(df, pair, interval, bbm, bbu, bbu_slow, slowMa, fastMa)
@@ -174,7 +167,7 @@ class Strategy(object):
         tp_signal       = df['tp_trigger'].iloc[-1]
         
         
-        tp_signal = True
+        # tp_signal = True
 
         if tp_signal:
             self._chart_tp(df, avg_price, pair, interval, rsi_col_name)

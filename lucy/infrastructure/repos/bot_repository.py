@@ -24,7 +24,8 @@ class BotRepository(Repository):
             max_safety_orders = int(row[8]),
             allow_shorts = row[9],
             interval = Interval(int(row[10])),
-            symbols = Symbols.from_str(row[11])
+            strategy=row[12],
+            symbols = Symbols.from_str(row[11]),
             )
 
 
@@ -111,7 +112,7 @@ class BotRepository(Repository):
         self._execute(sql, values)
 
     def _update_dca_bot(self, bot: DcaBot) -> None:
-        print(bot.symbols)
+        print(bot.strategy.name)
         sql = '''
             UPDATE bots
             SET 
@@ -124,7 +125,8 @@ class BotRepository(Repository):
         values = (bot.name, bot.description, bot.active, bot.num_positions_allowed, 
                   bot.capital, bot.entry_size, 
                   bot.so_size, bot.max_safety_orders, bot.allow_shorts, 
-                  bot.interval.interval, str(bot.symbols), bot.strategy.name, str(bot.id))
+                  bot.interval.interval, str(bot.symbols), bot.strategy.name, 
+                  str(bot.id))
         self._execute(sql, values)
 
     #endregion

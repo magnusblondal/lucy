@@ -7,7 +7,11 @@ logger skrifar hverja færslu nokkrum sinnum
 
 
 TODOs:
-Tengja signal við order
+ef position er opin og ég breyti um strategy; hvað gerist þá?
+  ? loka position
+  ? nota nyju strategiu til að loka
+  ? nota orgt strategy til að loka
+  
 geta lokað position manually, ef ég hef lokað á vefsíðunni 
   - tengja það við fill
 Ef vantar fills, þá þarf að sækja

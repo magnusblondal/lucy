@@ -10,10 +10,11 @@ from lucy.infrastructure.repos.bot_repository import BotRepository
 
 from lucy.application.usecases.bots.bot_activation import BotActivation
 from lucy.application.usecases.bots.audit import AuditBot
+import lucy.application.trading.strategies as strategies
 
 class BotController:
     view: BotView = BotView()
-    repo:BotRepository = BotRepository()
+    repo: BotRepository = BotRepository()
 
     def add(self):
         '''Add new Bot'''
@@ -22,7 +23,8 @@ class BotController:
         type                = click.prompt('Type',                                          type=str,   default = 'DCA')
         active              = click.prompt('Active',                                        type=bool,  default = True)
         symbols             = click.prompt('Symbols (space or , separated)',                type=str,   default = 'BTCUSD')
-        strategy            = click.prompt('Strategy',                                      type=str,   default = 'BBbreakout')
+        print(f"Available strategies: {' '.join(strategies.list())}")
+        strategy            = click.prompt('Strategy',                                      type=str)
         interval            = click.prompt('Interval (1 5 15 60  240 (4h)  1440 (24h))',    type=int,   default = 60)
         max_positions       = click.prompt('Max Concurrent Positions',                      type=int,   default = 1)
         capital             = click.prompt('Capital',                                       type=float)
@@ -47,8 +49,7 @@ class BotController:
             strategy = strategy)
 
         bot = DcaBot.create_new(gen)
-        repo = BotRepository()
-        repo.add(bot)
+        BotRepository().add(bot)
 
         self.view.confirmation(f"Bot '{bot.name}' created. Id: '{bot.id}'")
 
@@ -63,6 +64,7 @@ class BotController:
         name                = click.prompt('Name',                                          type=str,   default = bot.name)
         active              = click.prompt('Active',                                        type=bool,  default = bot.active)
         symbols             = click.prompt('Symbols (space or , separated)',                type=str,   default = str(bot.symbols))
+        print(f"Available strategies: {' '.join(strategies.list())}")
         strategy            = click.prompt('Strategy',                                      type=str,   default = bot.strategy.name)
         interval            = click.prompt('Interval (1 5 15 60  240 (4h)  1440 (24h))',    type=int,   default = bot.interval.interval)
         max_positions       = click.prompt('Max Concurrent Positions',                      type=int,   default = bot.num_positions_allowed)
@@ -75,6 +77,7 @@ class BotController:
 
         edit = EditDcaBot(
             name = name,
+            active= active,
             description = desc,
             capital = capital,
             entry_size = entry_size,
@@ -85,9 +88,9 @@ class BotController:
             interval = interval,
             symbols = symbols,
             strategy=strategy)
-        bot.update(edit)
 
         if click.confirm('Do you want to continue?', default=True, abort=True):
+            bot.update(edit)
             self.repo.update(bot)
             self.view.confirmation(f"Bot updated. Id: '{bot.id}'")
 

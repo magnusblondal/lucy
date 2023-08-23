@@ -15,7 +15,7 @@ from lucy.model.symbol import Symbol, Symbols
 from lucy.application.events.event import DomainEvent
 from lucy.application.events.some_events import BotActiveStateChangedEvent
 from lucy.application.trading.exchange import Exchange
-from lucy.application.trading.strategy import StrategyFactory
+import lucy.application.trading.strategies as strategies
 from lucy.main_logger import MainLogger
 
 class Bot(DomainModel):
@@ -31,7 +31,7 @@ class Bot(DomainModel):
 class DcaBot(Bot):    
 
     def __init__(self, id: Id, name: str, description: str, active: bool, capital: float, entry_size: float, so_size: float, 
-                 max_safety_orders: int, allow_shorts: bool, num_positions_allowed: int, interval: Interval, symbols: Symbols = None, strategy:str = 'BBbreakout' ) -> None:
+                 max_safety_orders: int, allow_shorts: bool, num_positions_allowed: int, interval: Interval, strategy:str, symbols: Symbols = None ) -> None:
         super().__init__(id, name, description, active, num_positions_allowed)
         self.capital            = capital
         self.entry_size         = entry_size
@@ -42,66 +42,7 @@ class DcaBot(Bot):
         self.interval           = interval
         self.symbols            = symbols or Symbols()
         self.logger             = MainLogger.get_logger(__name__)
-        self.strategy           = StrategyFactory.create(strategy)
-    
-    # def tick(self, intervals: Intervals, exchange: Exchange):
-    #     if not intervals.has(self.interval):
-    #         return
-        
-    #     for s in self.symbols:
-    #         try:
-    #             symbol = s.pf()
-    #             df = exchange.ohlc(symbol, self.interval, 'trade')
-    #             if df.empty:
-    #                 self.logger.warning(f"Bot {self.name} {symbol} {self.interval} {symbol} df is empty, no ohlc data")
-    #                 return
-                
-    #             # Ath hvort erum með position
-    #             #   ef ekki, þá athuga hvort er entry event
-    #             nm = "{:<10}".format(self.name)
-    #             sb = "{:<10}".format(symbol)
-    #             pr = "{:<12}".format(symbol)
-
-    #             has_open, pos = self.positions.has_open(symbol)
-    #             if has_open:     
-    #                 PositionsView().debug(self.name, symbol, self.positions, 'check for exit')
-    #                 # avg_entry_price = pos.average_price()
-    #                 # close_signal = self.strategy.validate_exit(df, avg_entry_price, symbol, self.interval)
-
-    #                 # if close_signal.is_valid():
-    #                 #     close_signal.bot_id = self.id
-    #                 #     close_signal.position_id = pos.id    
-    #                 #     print(f"Bot EXIT {self.name} {symbol} {self.interval} _SELL_ {symbol}")
-    #                 #     self._close(close_signal)
-    #                 if not self.check_for_close(symbol, df, pos):
-    #                     self.check_for_add_funds(symbol, df, pos)
-
-                    
-    #                 else:
-    #                     so_signal = self.strategy.validate_add_funds(df, pos.last_order_price(), symbol, self.interval)
-    #                     if so_signal.is_valid():
-    #                         print(f"Bot ADD FUNDS {self.name} {symbol} {self.interval} _ADD FUNDS_ {symbol} {so_signal.signal_time} {so_signal.close}")
-    #                         so_signal.bot_id = self.id
-    #                         so_signal.position_id = pos.id
-    #                         if pos.can_add_safety_order(self.max_safety_orders):
-    #                             self._add_funds2(pos, so_signal)
-    #                         else:
-    #                             self.logger.info(f"Bot {nm} {sb} {self.interval} {pr} {so_signal.signal_time} {so_signal.close} can't add funds, max safety orders reached")
-    #                             print(f"Bot {nm} {sb} {self.interval} {pr} can't add funds, max safety orders reached")
-                    
-    #             else:
-    #                 self.check_for_entry(symbol, df)
-    #                 # PositionsView().debug(self.name, symbol, self.positions, 'check for entry')
-    #                 # entry_signal = self.strategy.validate_entry(df, symbol, self.interval)
-    #                 # if entry_signal.is_valid():
-    #                 #     entry_signal.bot_id = self.id
-    #                 #     self.logger.info(f"Bot entering Position: {nm} {sb} {self.interval} {pr} {entry_signal.signal_time} {entry_signal.close} entry_signal: {entry_signal}")
-    #                 #     print(f"Bot entering Position: {nm} {sb} {self.interval} {pr}")
-    #                 #     self._new_position(entry_signal)
-                    
-    #         except Exception as e:
-    #             self.logger.error(f"Error in DcaBot.tick {self.name} {symbol} {self.interval}", exc_info=True)
-    #             self.logger.error(f"DF: cols: {df.columns} \n {df.head(5)}")
+        self.strategy           = strategies.make(strategy)
     
     def tick(self, intervals: Intervals, exchange: Exchange):
         if not intervals.has(self.interval):
@@ -205,8 +146,9 @@ class DcaBot(Bot):
                       bot.allow_shorts,
                       bot.max_positions_allowed,
                       Interval(bot.interval),
+                      bot.strategy,
                       Symbols.from_str(bot.symbols),
-                      bot.strategy)
+                      )
     
     def update(self, edit: EditDcaBot):
         self.name                   = edit.name
@@ -219,7 +161,8 @@ class DcaBot(Bot):
         self.num_positions_allowed  = edit.max_positions_allowed
         self.interval               = Interval(edit.interval)
         self.symbols                = Symbols.from_str(edit.symbols)
-        self.strategy               = StrategyFactory.create(edit.strategy)
+        self.strategy               = strategies.make(edit.strategy)
+        print(f"Bot {self.name} updated Strategy: {self.strategy.name}")
 
     def events(self) -> list[DomainEvent]:
         evs = self._events or []
