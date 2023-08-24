@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import pandas_ta as ta
 
-
 from lucy.model.interval import Interval
 from lucy.main_logger import MainLogger
 import lucy.application.trading.chart as chart
@@ -19,18 +18,6 @@ class BBbreakout(Strategy):
         self.target = 1.0
         self.add_funds_threshold = 1.0
         self.logger = MainLogger.get_logger(__name__)
-
-    def _make_signal(self, valid: bool, type:str, time: datetime, close: float, pair: str, interval: Interval) -> Signal:
-        return Signal.create_new(
-            None, # self.id,
-            self.name,
-            pair, 
-            "long",
-            type,
-            interval,
-            time,
-            time,
-            close) if valid else Signal.empty(time, close)
 
     def validate_entry(self, df: pd.DataFrame, pair: str, interval: Interval) -> Signal:
         # BBands
@@ -90,7 +77,6 @@ class BBbreakout(Strategy):
         # fast ma is crossing up over slow ma
         df["ema_cross_up"]      = (df[fastMa] > df[slowMa]) & (df[fastMa].shift() < df[slowMa].shift())
         # fast ma is crossing down under slow ma
-        df["ema_cross_down"]    = (df[fastMa] < df[slowMa]) & (df[fastMa].shift() > df[slowMa].shift())
         # closing above fast upper band
         df["bb_breakout"]       = np.where(df['close'] > df[bbu].shift(), True, False)
         # closing below slow upper band
@@ -166,7 +152,6 @@ class BBbreakout(Strategy):
         time            = df.index[-1].to_pydatetime() # type: ignore
         tp_signal       = df['tp_trigger'].iloc[-1]
         
-        
         # tp_signal = True
 
         if tp_signal:
@@ -204,7 +189,6 @@ class BBbreakout(Strategy):
         so_signal = df['so_signal'].iloc[-1]
 
         # so_signal = True
-
 
         if so_signal:
             self._chart_add_funds(df, pair, interval, rsi_col_name)

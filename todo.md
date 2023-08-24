@@ -5,13 +5,15 @@ WS Connection dettur út
 logger skrifar hverja færslu nokkrum sinnum
 
 
-
-TODOs:
+HUX:
 ef position er opin og ég breyti um strategy; hvað gerist þá?
   ? loka position
   ? nota nyju strategiu til að loka
-  ? nota orgt strategy til að loka
-  
+  ? nota org strategy til að loka
+
+TODOs:
+er SO skráður í db?
+Backtesting
 geta lokað position manually, ef ég hef lokað á vefsíðunni 
   - tengja það við fill
 Ef vantar fills, þá þarf að sækja

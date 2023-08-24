@@ -13,8 +13,7 @@ def since_hours(hours: int):
     return int( (datetime.now() - timedelta(hours=hours)).timestamp() )
 
 def since_max_candles(interval: Interval) -> int:
-    max = 500  # max rows that are returned from kraken
-    # max = 5000  # max rows that are returned from kraken
+    max = 5000  # max rows that are returned from kraken
     val = interval.interval
 
     if val < 60:
