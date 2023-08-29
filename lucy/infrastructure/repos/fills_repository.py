@@ -23,7 +23,6 @@ class FillsRepository(Repository):
         )
     
     def add(self, fill: Fill) -> None:
-        print(f"FillsRepository:: add: {fill}")
         sql = '''
             INSERT INTO fills (
                 id, instrument, time, price, buy, qty, remaining_order_qty, order_id, fill_type, fee_paid, fee_currency,

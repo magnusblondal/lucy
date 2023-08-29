@@ -198,11 +198,6 @@ class DcaBot(Bot):
     
     def _add_funds2(self, position: Position, signal: Signal):
         print(f"-> Bot {self.id} handle {signal.signal_type} -- add funds")
-        # if self.positions.is_empty():
-        #     print(f"-> Bot {self.id} handle {signal.signal_type} -- No position available, cannot add funds")
-        #     return
-        # position = self.positions.position_for_signal(signal)
-        
         if position is not None:
             position.add_funds(signal, self.so_size, self.max_safety_orders)
         else:

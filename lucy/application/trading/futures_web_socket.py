@@ -129,15 +129,18 @@ class FuturesSocketListener(object):
 
         # def run(*args):
         message_json = json.loads(message)
-        self.logger.info(message_json)
-
-        if message_json.get("event", "") == "challenge":
+        event_name = message_json.get("event", "")
+        feed_name = message_json.get("feed", "")
+        if event_name == "challenge":
+            self.logger.info(message_json)
             self.original_challenge = message_json["message"]
             self.signed_challenge = self._sign_challenge(self.original_challenge)
             self.challenge_ready = True
             if not self.subscribed:
                 self._subscribe_private()
         else:
+            if feed_name != "heartbeat":
+                self.logger.info(message_json)
             self.router.route(message_json)
 
     def _on_open(self, ws):

@@ -26,4 +26,15 @@ class Id:
     @staticmethod
     def make():
         return Id(generate_id())
-
+    
+    @staticmethod
+    def empty():
+        id = Id("")
+        id.id = ""
+        return id
+    
+    def is_empty(self):
+        return self.id == ""
+    
+    def __bool__(self) -> bool:
+        return not self.is_empty()

@@ -10,6 +10,9 @@ class OrderCreatedEvent(DomainEvent):
         super().__init__()
         self.order = order
 
+    def __str__(self) -> str:
+        return f"OrderCreatedEvent:: {self.order}"
+
 class OrderFilledEvent(DomainEvent):
     def __init__(self, fill_id: str, order_id: str, is_order_filled: bool) -> None:
         super().__init__()

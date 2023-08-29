@@ -12,7 +12,7 @@ ef position er opin og ég breyti um strategy; hvað gerist þá?
   ? nota org strategy til að loka
 
 TODOs:
-er SO skráður í db?
+Fill getur verið að koma inn áður en order er skrifuð í grunn
 Backtesting
 geta lokað position manually, ef ég hef lokað á vefsíðunni 
   - tengja það við fill

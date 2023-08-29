@@ -22,14 +22,18 @@ class OrderFilled(Usecase):
         self.logger =  MainLogger.get_logger(__name__)
         
     def handle(self, fills: Fills) -> OrderFilledResult:
-        evs = []
-        for fill in fills:
-            FillsRepository().add(fill)
-            evs = fill.events()
-        # print(f"OrderFilled: publishing {len(evs)} : {evs}")
-        bus.publish(evs)
-        ids = [fill.order_id for fill in fills]
-        result =  OrderFilledResult(True, ids)
-        self.logger.info(f"OrderFilled: returning {result}")
-        return result
+        try:
+            evs = []
+            for fill in fills:
+                FillsRepository().add(fill)
+                evs = fill.events()
+            print(f"OrderFilled: publishing {len(evs)} : {evs}")
+            bus.publish(evs)
+            ids = [fill.order_id for fill in fills]
+            result =  OrderFilledResult(True, ids)
+            self.logger.info(f"OrderFilled: returning {result}")
+            return result
+        except Exception as e:
+            self.logger.error(e, exc_info=True)
+            return OrderFilledResult(False, [])
     

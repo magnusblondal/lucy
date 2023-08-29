@@ -31,6 +31,13 @@ class Symbol(object):
     @staticmethod
     def ATOM():
         return Symbol('atom')
+    
+    @staticmethod
+    def empty():
+        return Symbol("")
+    
+    def is_empty(self):
+        return self.symbol == ""
 
 class Symbols(list[Symbol]):
     def __init__(self, symbols: list[Symbol] = None):

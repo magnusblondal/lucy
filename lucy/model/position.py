@@ -85,7 +85,6 @@ class Position(DomainModel):
         order = self._handle_order(signal, qty, 'entry')
         self._this_just_happened(PositionEntryEvent(self.id, self.bot_id, self.symbol, qty, self.side))
         self._this_just_happened(OrderCreatedEvent(order))
-        # self._this_just_happened(OrderCreatedEvent(self.id, self.bot_id, 'entry', order))
 
     def can_add_safety_order(self, max_safety_orders: int) -> bool:
         return len(self.orders) <= max_safety_orders
@@ -115,6 +114,7 @@ class Position(DomainModel):
                 order = self._create_sell_order(self.open_qty(), 'close', reduce_only=True)
             else:
                 order = self._create_buy_order(self.open_qty(), 'close', reduce_only=True)
+            order.signal = signal
             self.orders.append(order)
             self._this_just_happened(PositionExitEvent(position_id=self.id))  
             self._this_just_happened(OrderCreatedEvent(order))      
@@ -180,13 +180,26 @@ class Position(DomainModel):
         self._this_just_happened(ProfitCalculatedEvent(self.id, self.bot_id, self.profit, self.profit_pct))
 
     def calculate_profit_loss(self):
-        if not self.orders.is_close_filled():
-            print(f"-> Position {self.id} audit -- position is open")
-            return
-        profit, profit_pct, fees = self.orders.calculate_profit()
-        self.profit = profit
-        self.profit_pct = profit_pct
-        self._this_just_happened(ProfitCalculatedEvent(self.id, self.bot_id, self.profit, self.profit_pct))
+        try:
+            if not self.orders.is_close_filled():
+                print(f"-> Position {self.id} audit -- position is open")
+                return
+            profit, profit_pct, fees = self.orders.calculate_profit()
+            self.profit = profit
+            self.profit_pct = profit_pct
+            self._this_just_happened(ProfitCalculatedEvent(self.id, self.bot_id, self.profit, self.profit_pct))
+        except Exception as e:
+            self.logger.error(e, exc_info=True)
+
+    @staticmethod
+    def empty() -> 'Position':
+        return Position(Id.empty(), Id.empty(), Symbol.empty(), '')
+    
+    def is_empty(self) -> bool:
+        return self.id.is_empty()
+    
+    def __bool__(self) -> bool:
+        return not self.is_empty()
     
     def __str__(self) -> str:
         ss = '\n'.join([f"  {signal}" for signal in self.signals])

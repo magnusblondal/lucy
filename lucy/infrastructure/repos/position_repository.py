@@ -19,7 +19,7 @@ class PositionRepository(Repository):
             profit      = row[4],
             profit_pct  = row[5],
             created_at  = row[6]
-            )
+            ) if row is not None else Position.empty()
     
     def fetch(self, id: Id) -> Position:
         sql = '''
@@ -44,8 +44,8 @@ class PositionRepository(Repository):
             select o.position_id from orders o where o.id = %s)
             '''
         values = (str(order_id),)
-        pos = self._fetch_one(sql, values)
-        pos = self._build(pos)
+        row = self._fetch_one(sql, values)
+        pos = self._build(row)
         return self._fetch_data(pos)
     
     def fetch_with_data(self, id: Id) -> Positions:

@@ -117,7 +117,7 @@ class BBbreakout(Strategy):
         time = df.index[-1].to_pydatetime() # type: ignore 
         close = df["close"].iloc[-1]
         
-        # entry_signal = True
+        entry_signal = True
         
         if entry_signal:
             self._chart_entry(df, pair, interval, bbm, bbu, bbu_slow, slowMa, fastMa)
@@ -152,7 +152,7 @@ class BBbreakout(Strategy):
         time            = df.index[-1].to_pydatetime() # type: ignore
         tp_signal       = df['tp_trigger'].iloc[-1]
         
-        # tp_signal = True
+        tp_signal = True
 
         if tp_signal:
             self._chart_tp(df, avg_price, pair, interval, rsi_col_name)
