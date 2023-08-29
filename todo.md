@@ -18,7 +18,6 @@ geta lokað position manually, ef ég hef lokað á vefsíðunni
   - tengja það við fill
 Ef vantar fills, þá þarf að sækja
 Runner sjái þegar verða breytingar á bot active state
-Færa api key í betra form
 skilgreina hvaða exchange bot fer á móti
 
 -> hví þarf ég að rounda atom í heila tölu?

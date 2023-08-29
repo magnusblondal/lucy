@@ -27,7 +27,7 @@ class OrderFilled(Usecase):
             for fill in fills:
                 FillsRepository().add(fill)
                 evs = fill.events()
-            print(f"OrderFilled: publishing {len(evs)} : {evs}")
+            self.logger.info(f"OrderFilled: publishing {len(evs)} : {evs}")
             bus.publish(evs)
             ids = [fill.order_id for fill in fills]
             result =  OrderFilledResult(True, ids)

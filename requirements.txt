@@ -21,3 +21,5 @@ nbformat>=4.2.0
 pandas_ta
 schedule>=1.2
 mplfinance==3.7.2
+
+dynaconf<=3.2

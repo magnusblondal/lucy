@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import click
 
+from config import settings
 from lucy.application.trading.exchange import Exchange
 import lucy.application.trading.futures_socket_connector as web_socket_api
 
@@ -122,7 +123,6 @@ def status(order_id):
 def executions():
     for x in Exchange().executions():
         print(x)
-
 # __________ Bot ____________
 # ----------
 # All bots list
@@ -191,7 +191,7 @@ def stop(id):
 @cli.command(help='Listen to websocket')
 def listen():
     print("Listening...")
-    web_socket_api.listen()
+    web_socket_api.listen(settings)
 
 
 @cli.command(help='Run Forrest, run!')
