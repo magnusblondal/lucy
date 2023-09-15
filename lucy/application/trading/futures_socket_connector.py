@@ -34,8 +34,13 @@ def listen(settings, product_ids: list[str] = None):
         # "notifications_auth"
         ]
 
-    cfWs = FuturesSocketListener(product_ids, public_feeds_for_products, public_feeds, private_feeds, base_url=settings.api_path_ws_futures, 
-                                 api_key=settings.api_key, api_secret=settings.api_secret, timeout=10, trace=websocket_trace)
+    cfWs = FuturesSocketListener(product_ids, 
+                                 public_feeds_for_products, public_feeds, private_feeds, 
+                                 base_url=settings.api_path_ws_futures,
+                                 api_key=settings.api_key, 
+                                 api_secret=settings.api_secret,
+                                 timeout=10, 
+                                 trace=websocket_trace)
     # exit()
 
 if __name__ == "__main__":

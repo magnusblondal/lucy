@@ -67,7 +67,7 @@ class SocketRouter:
     def fills_snapshot(self, message_json, event=""):
         print('>>>>>>> Fills Snapshot------------------------------')
         self.fills = Fills.from_feed(message_json)
-        [print(f) for f in self.fills.tail(5)]
+        # [print(f) for f in self.fills.tail(5)]
 
     def fills_update(self, message_json, event=""):
         print('>>>>>>> Fills ------------------------------')

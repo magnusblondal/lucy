@@ -29,6 +29,7 @@ class FuturesSocketListener(object):
         self.challenge_ready = False
         self.router = SocketRouter()
         self.subscribed = False
+        self._turning_off = False
         self._connect()
 
     def _message(self, feed: str, event: str, product_ids: list[str]=None) -> dict:
@@ -118,6 +119,7 @@ class FuturesSocketListener(object):
     def _close(self):
         """Close the web socket connection"""
         print("Closing...")
+        self._turning_off = True
         self.unsubscribe()
         self.ws.close()
         print("Closed")
@@ -139,7 +141,7 @@ class FuturesSocketListener(object):
             if not self.subscribed:
                 self._subscribe_private()
         else:
-            if feed_name != "heartbeat":
+            if feed_name != "heartbeat" and feed_name != "fills_snapshot":
                 self.logger.info(message_json)
             self.router.route(message_json)
 
