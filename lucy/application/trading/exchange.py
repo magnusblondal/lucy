@@ -19,6 +19,7 @@ from .ticker import Ticker
 from .instrument import Instrument, Instruments 
 from lucy.main_logger import MainLogger
 import lucy.application.utils.dtm_utils as dtm
+from config import settings
 
 class OrderType(Enum):
     LIMIT = 'lmt'
@@ -31,8 +32,8 @@ class OrderType(Enum):
 class Exchange:
     def __init__(self) -> None:
         path = "https://futures.kraken.com/"
-        public = "3EWPFVk88Cmol8hw8falnfA67Q5RAhnT8jysgfif9gnKmhf0KacIddHA"
-        private = "D06lgIZD5y/9z6bZL17S7SioS0zwEEQGQH0T7+kVfto1CePZbvzR7UQUoKZzBT/uWEyVy/vmwislBLfCc9/a7Ip2"
+        public = settings.api_key
+        private = settings.api_secret
         self.futures_api    = FuturesApi(path, public, private)
         self.kraken_api     = KrakenApi()
         self.logger         = MainLogger.get_logger(__name__)

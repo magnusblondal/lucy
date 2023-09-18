@@ -9,7 +9,16 @@ HUX:
 ef position er opin og ég breyti um strategy; hvað gerist þá?
   ? loka position
   ? nota nyju strategiu til að loka
-  ? nota org strategy til að loka
+  ? nota org strategy til að loka 
+
+DEVOPS:
+setja upp docker
+setja upp docker compose
+hosting
+delivery pipeline
+github actions ?
+monitoring
+
 
 TODOs:
 Fill getur verið að koma inn áður en order er skrifuð í grunn => PnL calc er ekki heyrt á réttum tíma

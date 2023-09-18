@@ -101,7 +101,7 @@ class BBbreakout(Strategy):
 
         # setur indexinn (tímann) þegar förum niður fyrir slow upper band
         df['counter_bbu_slow_cross_down'] = df.index.where(df.bbu_slow_cross_down)
-        df['counter_bbu_slow_cross_down'].fillna(method="ffill", inplace=True)
+        df['counter_bbu_slow_cross_down'].fillna(method="ffill", inplace=True)z
         # fá tímafildið til að geta gert timedelta reikninga
         df['date'] = pd.to_datetime(df.index)
         # reikna hvað er langt frá því að fórum upp yfir middle band
