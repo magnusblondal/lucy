@@ -22,18 +22,18 @@ import lucy.application.utils.dtm_utils as dtm
 from config import settings
 
 class OrderType(Enum):
-    LIMIT = 'lmt'
-    POST = 'post'
-    MARKET = 'mkt'
-    STOP = 'stp'
-    TAKE_PROFIT = 'take_profit'
-    IMMEDIATE_OR_CANCEL = 'ioc'
+    LIMIT               = 'lmt'
+    POST                = 'post'
+    MARKET              = 'mkt'
+    STOP                = 'stp'
+    TAKE_PROFIT         = 'take_profit'
+    IMMEDIATE_OR_CANCEL = 'ioc' 
 
 class Exchange:
     def __init__(self) -> None:
-        path = "https://futures.kraken.com/"
-        public = settings.api_key
-        private = settings.api_secret
+        path                = "https://futures.kraken.com/"
+        public              = settings.api_key
+        private             = settings.api_secret
         self.futures_api    = FuturesApi(path, public, private)
         self.kraken_api     = KrakenApi()
         self.logger         = MainLogger.get_logger(__name__)
