@@ -7,6 +7,8 @@ python-dotenv
 
 fastapi
 uvicorn
+psycopg2==2.9.6
+rel==0.4.9
 shortuuid
 
 six==1.12.0
@@ -20,6 +22,7 @@ nbformat>=4.2.0
 
 pandas_ta
 schedule>=1.2
-mplfinance==3.7.2
+# mplfinance==3.7.2
 
 dynaconf<=3.2
+pyparsing==3.0.9

@@ -49,3 +49,8 @@ leverage
 
 Muna:
 setja max lines aftur í 5000 -> dtm_utils
+
+
+db 
+opna port út
+hvernig hosta ég apann?
