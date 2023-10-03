@@ -54,3 +54,9 @@ setja max lines aftur í 5000 -> dtm_utils
 db 
 opna port út
 hvernig hosta ég apann?
+
+
+--------------- 
+spurningar við að setja upp serverinn:
+hvad er málid vid psycopg2 og psycopg2-binary? hvernig er þetta installað med requirements.txt?
+trdr notandi á að vera með aðgang að db

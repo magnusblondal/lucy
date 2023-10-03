@@ -3,6 +3,9 @@ from .repository import Repository
 from lucy.application.trading.feeds.fills import Fill, Fills
 
 class FillsRepository(Repository):
+    def __init__(self):
+        super().__init__()
+        
     def _build(self, row: tuple) -> Fill:
         return Fill(
             Id(row[0]),

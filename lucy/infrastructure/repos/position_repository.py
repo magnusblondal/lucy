@@ -8,6 +8,7 @@ from lucy.main_logger import MainLogger
 
 class PositionRepository(Repository):
     def __init__(self):
+        super().__init__()
         self.logger = MainLogger.get_logger(__name__)
 
     def _build(self, row) -> Position:

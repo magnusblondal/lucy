@@ -3,6 +3,9 @@ from lucy.model.id import Id
 from .repository import Repository
 
 class SignalRepository(Repository):
+    def __init__(self):
+        super().__init__()
+        
     def _build(self, row) -> Signal:
         return Signal(
             id = Id(row[0]),

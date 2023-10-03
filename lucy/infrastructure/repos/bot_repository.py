@@ -11,6 +11,9 @@ from .order_repository import OrderRepository
 from rich import inspect
 
 class BotRepository(Repository):
+    def __init__(self):
+        super().__init__()
+        
     def _build(self, row: tuple) -> DcaBot:
         return DcaBot(
             Id(row[0]),

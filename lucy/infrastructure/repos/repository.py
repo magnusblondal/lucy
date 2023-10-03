@@ -1,32 +1,24 @@
-from pydantic import BaseModel
 import psycopg2
 import psycopg2.extras
 import psycopg2.sql
+import psycopg2.pool
 
-DB_HOST = '127.0.0.1'
-DB_PORT = 5432
-DB_NAME = 'trdr_kraken'
-DB_USER = 'trdr'
-DB_PASS = 'secret'
+from config import settings
 
 class Repository:
-    def test(self):
-        connection = psycopg2.connect(host=DB_HOST, port=DB_PORT, database=DB_NAME, user=DB_USER, password=DB_PASS)
-        cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
-        mSql = '''
-            INSERT INTO bots
-            (id, name, description, active, capital, entry_size, so_size, max_safety_orders, allow_shorts)
-            VALUES
-            ('botId_2', 'Bot 2', 'Bot 2 description', true, 1000, 10, 10, 10, false)
-            '''
-        cursor.execute(mSql)
-        connection.commit()
-        cursor.close()
-        connection.close()
+    def __init__(self):     
+        self.pool = psycopg2.pool.SimpleConnectionPool(
+            minconn     = 1,
+            maxconn     = 10,
+            host        = settings.db_host,
+            port        = settings.db_port,
+            database    = settings.db_name,
+            user        = settings.db_user,
+            password    = settings.db_pass
+        )
 
     def _execute(self, sql: str, values):
-        connection = psycopg2.connect(host=DB_HOST, port=DB_PORT, database=DB_NAME, user=DB_USER, password=DB_PASS)
+        connection = self.pool.getconn()
         cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         cursor.execute(sql, values)
@@ -35,7 +27,7 @@ class Repository:
         connection.close()
 
     def _fetch_one(self, sql: str, values):
-        connection = psycopg2.connect(host=DB_HOST, port=DB_PORT, database=DB_NAME, user=DB_USER, password=DB_PASS)
+        connection = self.pool.getconn()
         cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         cursor.execute(sql, values)
@@ -45,7 +37,7 @@ class Repository:
         return result
     
     def _fetch_all(self, sql: str, values= None):
-        connection = psycopg2.connect(host=DB_HOST, port=DB_PORT, database=DB_NAME, user=DB_USER, password=DB_PASS)
+        connection = self.pool.getconn()
         cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         cursor.execute(sql, values)
@@ -53,4 +45,3 @@ class Repository:
         cursor.close()
         connection.close()
         return result
-    

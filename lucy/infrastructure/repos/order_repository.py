@@ -7,6 +7,9 @@ from .repository import Repository
 from .fills_repository import FillsRepository
 
 class OrderRepository(Repository):
+    def __init__(self):
+        super().__init__() 
+        
     def _build(self, row) -> Order:
         return Order(
             id = row[0],
