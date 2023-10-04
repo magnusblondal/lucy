@@ -15,8 +15,7 @@ jobs:
         port: ${{ secrets.PORT }}
         script_stop: true
         script: |
-          su maggi
-          cd /home/maggi/lucy
+          cd ~/lucy 
           git pull origin master
           pip install -r requirements.txt
           git status
