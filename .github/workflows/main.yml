@@ -13,8 +13,10 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
+        script_stop: true
         script: |
           su maggi
           cd /home/maggi/lucy
           git pull origin master
+          pip install -r requirements.txt
           git status
