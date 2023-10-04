@@ -14,6 +14,8 @@ jobs:
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         script: |
+          su maggi
+          cd /home/maggi/lucy
           git pull origin master
           pip install -r requirements.txt
           git status
