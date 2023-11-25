@@ -1,16 +1,15 @@
-from decimal import Decimal
-
 
 def rnd(d: float, precision: int = 2):
     if d is None:
         return 0
     return d if d == 0 else round(d, precision)
 
+
 class Currency:
     currency: str
     quantity: float
     value: float
-        
+
     def __init__(self, curr: str, data) -> None:
         self.currency = curr
         self.quantity = float(data['quantity'])
@@ -22,6 +21,7 @@ class Currency:
             f"   quantity: {rnd(self.quantity, prec)}\n" +\
             f"   value: {rnd(self.value)}\n"
 
+
 class FuturesCurrency(Currency):
     collateral: float
     available: float
@@ -30,8 +30,7 @@ class FuturesCurrency(Currency):
         super().__init__(curr, data)
         self.collateral = float(data['collateral'])
         self.available = float(data['available'])
-    
-    
+
     def __str__(self) -> str:
         return f"{super().__str__()}" +\
             f"   collateral: {rnd(self.collateral)}\n" +\
@@ -40,6 +39,7 @@ class FuturesCurrency(Currency):
 
 class Account:
     pass
+
 
 class Flex(Account):
     initialMargin: float
@@ -71,7 +71,8 @@ class Flex(Account):
         self.availableMargin = float(data["availableMargin"])
         self.marginEquity = float(data["marginEquity"])
         self.type = data["type"]
-        self.currencies = [FuturesCurrency(c, data['currencies'][c]) for c in data['currencies']]
+        self.currencies = [FuturesCurrency(
+            c, data['currencies'][c]) for c in data['currencies']]
 
     def __str__(self) -> str:
         currs = [f"{s}" for s in self.currencies]
@@ -91,4 +92,3 @@ class Flex(Account):
             f'availableMargin: {rnd(self.availableMargin)}\n' +\
             f'marginEquity: {rnd(self.marginEquity)}\n' +\
             f'type: {self.type}'
-        

@@ -1,13 +1,9 @@
-from rich import inspect
-
 from lucy.application.trading.exchange import Exchange
-
 from lucy.application.usecases.trade.sell import Sell
 from lucy.application.usecases.trade.buy import Buy
-
 from lucy.cli.views.open_order_view import OpenOrderView
-import lucy.application.events.bus as bus
 from lucy.model.symbol import Symbol
+
 
 class OrderController:
     def __init__(self):
@@ -23,7 +19,7 @@ class OrderController:
             order = Exchange().long_market(symbol, qty)
             print(f"Long Market {symbol} {qty}")
         print(order)
-    
+
     def buy(self, symbol: Symbol, qty: float):
         '''Buy a symbol'''
         symbol = symbol if isinstance(symbol, Symbol) else Symbol(symbol)
@@ -40,25 +36,31 @@ class OrderController:
         else:
             self.view.confirmation(f"Sell order '{symbol}' {qty}")
             print(order)
-            
+
     def open_orders(self):
         '''List open orders'''
         orders = Exchange().open_orders()
         self.view.listi(orders, 'Open Orders')
-    
+
     def close(self, symbol: Symbol):
         '''Close a position for a symbol'''
         symbol = symbol if isinstance(symbol, Symbol) else Symbol(symbol)
-        positions = Exchange().positions()
+        posiions = Exchange().positions()
         pos = [p for p in positions if p.symbol == symbol]
         if len(pos) == 0:
             print(f"No position for {symbol}")
             return
         for p in pos:
+            # TODO: klára
             order = Exchange().close(p)
-            # print(order)
 
-    def limit_order(self, symbol: Symbol, qty: float, price: float, short: bool = False):
+    def limit_order(
+        self,
+        symbol: Symbol,
+        qty: float,
+        price: float,
+        short: bool = False
+    ):
         '''Create a limit order'''
         symbol = symbol if isinstance(symbol, Symbol) else Symbol(symbol)
         if short:
@@ -67,8 +69,8 @@ class OrderController:
         else:
             print(f"Long Limit {symbol} {qty}")
             order = Exchange().long_lmt(symbol, qty, price)
-        # print(order)
-    
+            # TODO: klára
+
     def cancel(self, symbol: Symbol = None):
         '''Cancel an order for a symbol, or all orders'''
         if not symbol:
@@ -84,14 +86,16 @@ class OrderController:
                 if o.symbol == symbol:
                     order = Exchange().cancel(o.order_id)
                     # print(order)
-    
+
     def edit(self, order_id: str, qty: float, price: float):
         '''Edit an order'''
         order = Exchange().edit(qty, price, order_id=order_id)
         self.view.confirmation(f"Edit {order_id} {qty} {price}")
         # print(order)
-    
+        # TODO: klára
+
     def order_status(self, order_id: str):
         '''Get order status'''
         order = Exchange().order_status(order_id)
         # print(order)
+        # TODO: klára

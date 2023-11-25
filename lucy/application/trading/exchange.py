@@ -16,62 +16,155 @@ from .open_order import OpenOrder, OrderResults, OrderEvent
 from .open_position import OpenPosition
 from .execution import Execution
 from .ticker import Ticker
-from .instrument import Instrument, Instruments 
+from .instrument import Instrument, Instruments
 from lucy.main_logger import MainLogger
 import lucy.application.utils.dtm_utils as dtm
 from config import settings
 
+
 class OrderType(Enum):
-    LIMIT               = 'lmt'
-    POST                = 'post'
-    MARKET              = 'mkt'
-    STOP                = 'stp'
-    TAKE_PROFIT         = 'take_profit'
-    IMMEDIATE_OR_CANCEL = 'ioc' 
+    LIMIT = 'lmt'
+    POST = 'post'
+    MARKET = 'mkt'
+    STOP = 'stp'
+    TAKE_PROFIT = 'take_profit'
+    IMMEDIATE_OR_CANCEL = 'ioc'
+
 
 class Exchange:
     def __init__(self) -> None:
-        path                = "https://futures.kraken.com/"
-        public              = settings.api_key
-        private             = settings.api_secret
-        self.futures_api    = FuturesApi(path, public, private)
-        self.kraken_api     = KrakenApi()
-        self.logger         = MainLogger.get_logger(__name__)
-    
-    def long_market(self, symbol: Symbol, size: float, client_order_id: str="", reduce_only: bool=False) -> OrderResults:
-        return self._place_market_order(symbol, 'buy', size, client_order_id, reduce_only)
+        path = "https://futures.kraken.com/"
+        public = settings.api_key
+        private = settings.api_secret
+        self.futures_api = FuturesApi(path, public, private)
+        self.kraken_api = KrakenApi()
+        self.logger = MainLogger.get_logger(__name__)
 
-    def short_market(self, symbol: Symbol, size: float, client_order_id: str="", reduce_only: bool=False):
-        return self._place_market_order(symbol, 'sell', size, client_order_id, reduce_only)
+    def long_market(
+        self,
+        symbol: Symbol,
+        size: float,
+        client_order_id: str = "",
+        reduce_only: bool = False
+    ) -> OrderResults:
+        return self._place_market_order(
+            symbol,
+            'buy',
+            size,
+            client_order_id,
+            reduce_only
+        )
 
-    def long_lmt(self, symbol: Symbol, size: float, limit_price: float, stop_price: float = None, client_order_id: str="") -> OrderResults:
-        orderType = OrderType.LIMIT if stop_price is None else OrderType.STOP
-        return self._place_limit_order(symbol, 'buy', size, limit_price, client_order_id)
+    def short_market(
+        self,
+        symbol: Symbol,
+        size: float,
+        client_order_id: str = "",
+        reduce_only: bool = False
+    ):
+        return self._place_market_order(
+            symbol,
+            'sell',
+            size,
+            client_order_id,
+            reduce_only
+        )
 
-    def short_lmt(self, symbol: Symbol, size: float, limit_price: float, client_order_id: str="") -> OrderResults:
-        return self._place_limit_order(symbol, 'sell', size, limit_price, client_order_id)
-    
-    def _place_market_order(self, symbol: Symbol, side: str, size: float, client_order_id: str="", reduce_only: bool=False) -> OrderResults:
+    def long_lmt(
+        self,
+        symbol: Symbol,
+        size: float,
+        limit_price: float,
+        stop_price: float = None,
+        client_order_id: str = ""
+    ) -> OrderResults:
+        # orderType = OrderType.LIMIT if stop_price is None else OrderType.STOP
+        return self._place_limit_order(
+            symbol,
+            'buy',
+            size,
+            limit_price,
+            client_order_id
+        )
+
+    def short_lmt(
+        self,
+        symbol: Symbol,
+        size: float,
+        limit_price: float,
+        client_order_id: str = ""
+    ) -> OrderResults:
+        return self._place_limit_order(
+            symbol,
+            'sell',
+            size,
+            limit_price,
+            client_order_id
+        )
+
+    def _place_market_order(
+        self,
+        symbol: Symbol,
+        side: str,
+        size: float,
+        client_order_id: str = "",
+        reduce_only: bool = False
+    ) -> OrderResults:
         self.logger.info(f"Placing market order {side} {size} {symbol}")
-        return self._place_order(OrderType.MARKET, symbol, side, size, limit_price=None, 
-                                client_order_id=client_order_id, reduce_only=reduce_only)
+        return self._place_order(
+            OrderType.RKET,
+            symbol,
+            side,
+            size,
+            limit_price=None,
+            client_order_id=client_order_id,
+            reduce_only=reduce_only
+        )
         # TODO: Handle this
         #         Sell Market pf_ethusd 0.05235602094240838
 
+    def _place_limit_order(
+        self,
+        symbol: Symbol,
+        side: str,
+        size: float,
+        limit_price: float,
+        client_order_id: str = ""
+    ) -> OrderResults:
+        return self._place_order(
+            OrderType.LIMIT,
+            symbol,
+            side,
+            size,
+            limit_price,
+            client_order_id
+        )
 
-    def _place_limit_order(self, symbol: Symbol, side: str, size: float, limit_price: float, client_order_id: str="") -> OrderResults:
-        return self._place_order(OrderType.LIMIT, symbol, side, size, limit_price, client_order_id)
-
-
-    def _place_order(self, order_type: OrderType, symbol: Symbol, side: str, size: float, limit_price: float, 
-                     client_order_id: str="", reduce_only: bool=False) -> OrderResults:
-        order = self.futures_api.send_order(order_type.value, str(symbol), side, size, limit_price, stopPrice=None, 
-                                            clientOrderId=client_order_id, reduce_only=reduce_only)
+    def _place_order(
+        self,
+        order_type: OrderType,
+        symbol: Symbol,
+        side: str,
+        size: float,
+        limit_price: float,
+        client_order_id: str = "",
+        reduce_only: bool = False
+    ) -> OrderResults:
+        order = self.futures_api.send_order(
+            order_type.value,
+            str(symbol),
+            side,
+            size,
+            limit_price,
+            stopPrice=None,
+            clientOrderId=client_order_id,
+            reduce_only=reduce_only
+        )
         res = json.loads(order)
         results = self._parse_order_results(res)
         return results
-    
-        # success = res["result"] == 'success'    
+
+        # success = res["result"] == 'success'
         # if success:
         #     sendStatus = res['sendStatus']
         #     orderEvents = sendStatus['orderEvents']
@@ -81,8 +174,8 @@ class Exchange:
         # else:
         #     order = None
         # return OrderResults(success, order)
-        
-        # success = res["result"] == 'success'    
+
+        # success = res["result"] == 'success'
         # if success:
         #     sendStatus = res['sendStatus']
         #     orderEvents = sendStatus['orderEvents']
@@ -92,15 +185,16 @@ class Exchange:
         #     order = None
         # return OrderResults(success, order)
 
-
     def close(self, position: OpenPosition) -> OrderResults:
         '''
         Loka opinni stöðu
         '''
         if position.is_short():
-            res = self.long_market(position.symbol, position.size, reduce_only=True)
+            res = self.long_market(
+                position.symbol, position.size, reduce_only=True)
         else:
-            res = self.short_market(position.symbol, position.size, reduce_only=True)
+            res = self.short_market(
+                position.symbol, position.size, reduce_only=True)
         return res
 
     def cancel(self, order_id) -> None:
@@ -119,10 +213,17 @@ class Exchange:
         '''Hætta við öll tilboð'''
         self.futures_api.cancel_all_orders()
 
-    def edit(self, size: float,  limit_price: float, stop_price: float = None, order_id: str = None, client_order_id: str = None) -> None:
+    def edit(
+        self,
+        size: float,
+        limit_price: float,
+        stop_price: float = None,
+        order_id: str = None,
+        client_order_id: str = None
+    ) -> None:
         '''Breyta opnu tilboði.'''
         if client_order_id is None and order_id is None:
-            print('Verður að gefa upp annað hvort order_id eða client_order_id')
+            print('Vantar annad hvort order_id eða client_order_id')
             return
 
         if client_order_id is not None:
@@ -132,7 +233,7 @@ class Exchange:
 
         postBody = "%s&limitPrice=%s&size=%s" % (
             id, limit_price, size)
-        
+
         if stop_price is not None:
             postBody = postBody + f"&stopPrice={stop_price}"
         self.futures_api.edit_order(postBody)
@@ -161,12 +262,12 @@ class Exchange:
                 p.ticker = tickers[p.symbol]
             return ps
         return pos
-    
+
     def order_status(self, order_id: str) -> OpenOrder:
         '''Staða tiltekins tilboðs'''
         orders = self.futures_api.get_order_status(order_id)
         res = json.loads(orders)
-        success = res["result"] == 'success'
+        # success = res["result"] == 'success'
         os = res["orders"][0]
         o = os['order']
 
@@ -174,42 +275,54 @@ class Exchange:
         filled = float(o['filled'])
         unfilled = quantity - filled
 
-        oo = OpenOrder( order_id = o['orderId'], 
-            symbol = o['symbol'],
-            side = o['side'],
-            orderType = o['type'],
-            limitPrice = float(o['limitPrice']),
-            unfilledSize = unfilled,
-            receivedTime = '',
-            status = os['status'],
-            filledSize = filled,
-            reduceOnly = o['reduceOnly'],
-            lastUpdateTime = o['lastUpdateTimestamp'],
-            cliOrdId = o['cliOrdId']
-            )
+        oo = OpenOrder(order_id=o['orderId'],
+                       symbol=o['symbol'],
+                       side=o['side'],
+                       orderType=o['type'],
+                       limitPrice=float(o['limitPrice']),
+                       unfilledSize=unfilled,
+                       receivedTime='',
+                       status=os['status'],
+                       filledSize=filled,
+                       reduceOnly=o['reduceOnly'],
+                       lastUpdateTime=o['lastUpdateTimestamp'],
+                       cliOrdId=o['cliOrdId']
+                       )
         return oo
-    
-    def executions(self, since: datetime, before: datetime = None, limit: int = 1000):
-        '''Executions á gefnu tímabili'''     
+
+    def executions(
+        self,
+        since: datetime,
+        before: datetime = None,
+        limit: int = 1000
+    ):
+        '''Executions á gefnu tímabili'''
         timestamp = since.timestamp()
         milliseconds = int(timestamp * 1000)
-        xs = self.futures_api.get_executions(since=milliseconds, before=before, limit=limit)
+        xs = self.futures_api.get_executions(
+            since=milliseconds, before=before, limit=limit)
         executedOrders = [x['event']['execution']['execution'] for x in xs]
         return [Execution.from_kraken(x) for x in executedOrders]
 
-    def executions_by_exchage_ids(self, exchange_ids: list[str], since: datetime, before: datetime = None, limit: int = 1000):    
+    def executions_by_exchage_ids(
+        self,
+        exchange_ids: list[str],
+        since: datetime,
+        before: datetime = None,
+        limit: int = 1000
+    ):
         xs = self.executions(since, before, limit)
-        return [x for x in xs if x.orderUid in exchange_ids] 
-        
+        return [x for x in xs if x.orderUid in exchange_ids]
+
     def accounts(self) -> List[Account]:
         return self.futures_api.get_accounts()
 
     def tickers(self) -> list[Ticker]:
         res = self.futures_api.get_tickers()
         res = json.loads(res)
-        ts = res['tickers'] 
+        ts = res['tickers']
         return [Ticker.from_kraken(t) for t in ts]
-        
+
     def tickers_for_symbols(self, symbols: list[str]) -> dict[Ticker]:
         ts = self.tickers()
         xs = [t for t in ts if t.symbol in symbols]
@@ -218,9 +331,18 @@ class Exchange:
     def instruments(self) -> Instruments:
         res = self.futures_api.get_instruments()
         res = json.loads(res)
-        return Instruments([Instrument.from_kraken(i) for i in res['instruments']])
-    
-    def ohlc(self, symbol: Symbol, interval: Interval, tick_type: str="trade", since: int = 0) -> pd.DataFrame:
+        return Instruments([
+            Instrument.from_kraken(i)
+            for i in res['instruments']
+        ])
+
+    def ohlc(
+        self,
+        symbol: Symbol,
+        interval: Interval,
+        tick_type: str = "trade",
+        since: int = 0
+    ) -> pd.DataFrame:
         '''
         tick_type:  "spot", "mark", "trade"
         from_time:  epoch timestamp
@@ -229,26 +351,29 @@ class Exchange:
             since = dtm.since_max_candles(interval)
 
         try:
-            res = self.futures_api.ohlc(symbol, interval.resolution(), tick_type, since)
-            if  res.get("candles") is None:
+            res = self.futures_api.ohlc(
+                symbol, interval.resolution(), tick_type, since)
+            if res.get("candles") is None:
                 self.logger.error(f"No candles received; {res})")
                 return pd.DataFrame([])
-            
+
             data = res['candles']
-            ohlc = pd.DataFrame(data, columns=['time', 'open', 'high', 'low', 'close', 'volume'])
-            ohlc['time']    = pd.to_datetime(ohlc['time'], unit='ms') # 
-            ohlc            = ohlc.set_index('time', drop=True)
-            ohlc['open']    = ohlc['open'].astype(float) 
-            ohlc['close']   = ohlc['close'].astype(float) 
-            ohlc['high']    = ohlc['high'].astype(float) 
-            ohlc['low']     = ohlc['low'].astype(float) 
-            ohlc['volume']  = ohlc['volume'].astype(float) 
+            ohlc = pd.DataFrame(
+                data,
+                columns=['time', 'open', 'high', 'low', 'close', 'volume'])
+            ohlc['time'] = pd.to_datetime(ohlc['time'], unit='ms')
+            ohlc = ohlc.set_index('time', drop=True)
+            ohlc['open'] = ohlc['open'].astype(float)
+            ohlc['close'] = ohlc['close'].astype(float)
+            ohlc['high'] = ohlc['high'].astype(float)
+            ohlc['low'] = ohlc['low'].astype(float)
+            ohlc['volume'] = ohlc['volume'].astype(float)
             return ohlc
         except Exception as e:
             print(e)
             self.logger.error(e)
             return pd.DataFrame([])
-    
+
     # Þessi sækir í regular api
     # def ohlc(self, symbol: str, interval: int, since: int = 0) -> pd.DataFrame:
     #     res = self.kraken_api.ohlc(symbol, interval, since)
@@ -256,27 +381,28 @@ class Exchange:
     #         print('Villa við að sækja gögn')
     #         print(res)
     #         return pd.DataFrame([])
-        
+
     #     data = res['result']
     #     data = [v for (k, v) in data.items() if k != 'last'][0]
-    #     ohlc = pd.DataFrame(data, columns=['time', 'open', 'high', 'low', 'close', 'vwap','volume', 'count'])
+    #     ohlc = pd.DataFrame(data, columns=['time',
+    #     'open', 'high', 'low', 'close', 'vwap','volume', 'count'])
     #     ohlc['time']    = pd.to_datetime(ohlc['time'], unit='s')
     #     ohlc            = ohlc.set_index('time', drop=True)
-    #     ohlc['open']    = ohlc['open'].astype(float) 
-    #     ohlc['close']   = ohlc['close'].astype(float) 
-    #     ohlc['high']    = ohlc['high'].astype(float) 
-    #     ohlc['low']     = ohlc['low'].astype(float) 
-    #     ohlc['vwap']    = ohlc['vwap'].astype(float) 
-    #     ohlc['volume']  = ohlc['volume'].astype(float) 
-    #     ohlc['count']   = ohlc['count'].astype(int) 
+    #     ohlc['open']    = ohlc['open'].astype(float)
+    #     ohlc['close']   = ohlc['close'].astype(float)
+    #     ohlc['high']    = ohlc['high'].astype(float)
+    #     ohlc['low']     = ohlc['low'].astype(float)
+    #     ohlc['vwap']    = ohlc['vwap'].astype(float)
+    #     ohlc['volume']  = ohlc['volume'].astype(float)
+    #     ohlc['count']   = ohlc['count'].astype(int)
     #     return ohlc
 
     def _parse_order_results(self, res):
-        success = res["result"] == 'success'    
+        success = res["result"] == 'success'
 
         if not success:
             return None
-        
+
         if 'sendStatus' in res.keys():
             sendStatus = res['sendStatus']
             if 'orderEvents' in sendStatus.keys():
@@ -286,12 +412,11 @@ class Exchange:
                     oe = OrderEvent.from_dict(inf['orderPriorExecution'])
                     return OrderResults(success, oe)
 
-                    
         # inf = orderEvents[0] # ['order']
         # order = OrderEvent.from_dict(inf)
         # return OrderResults(success, order)
-        
-        # success = res["result"] == 'success'    
+
+        # success = res["result"] == 'success'
         # if success:
         #     sendStatus = res['sendStatus']
         #     orderEvents = sendStatus['orderEvents']
@@ -327,8 +452,8 @@ class Exchange:
 # }
 
 # {
-#     'result': 'success', 
-#     'sendStatus': 
+#     'result': 'success',
+#     'sendStatus':
 #     {
 #         'order_id': '6a50f30b-73e9-4f44-8d34-e39a73a9592b',
 #         'cliOrdId': 'XWXvVxoQa6_3CBbvAXcPb',
@@ -340,7 +465,7 @@ class Exchange:
 #                 'price': 0.7298,
 #                 'amount': 137.0,
 #                 'orderPriorEdit': None,
-#                 'orderPriorExecution': 
+#                 'orderPriorExecution':
 #                 {
 #                       'orderId': '6a50f30b-73e9-4f44-8d34-e39a73a9592b',
 #                       'cliOrdId': 'XWXvVxoQa6_3CBbvAXcPb',
@@ -353,11 +478,11 @@ class Exchange:
 #                       'reduceOnly': False,
 #                       'timestamp': '2023-07-13T08:26:43.059Z',
 #                       'lastUpdateTimestamp': '2023-07-13T08:26:43.059Z'
-#                 }, 
+#                 },
 #                 'takerReducedQuantity': None,
 #                 'type': 'EXECUTION'
 #             }
 #         ]
-#     }, 
+#     },
 #     'serverTime': '2023-07-13T08:26:43.061Z'
 # }

@@ -1,23 +1,34 @@
-from rich import inspect, print
-from rich.table import Table
-from lucy.application.trading.feeds.fills import Fills
 from lucy.cli.views.fill_view import FillsView
 from lucy.cli.views.signal_view import SignalView
 
 from lucy.model.order import Order, Orders
 from .view import View
 
+
 class OrderView(View):
-    def summary(self, orders: Orders, indents:int = 0, verbose:bool = False) -> None:
-        afp = self.dim("Avg entry price:", f"{orders.avg_accumulation_fill_price():.3f}")
-        acp = self.dim('Avg close price:', f"{orders.avg_close_fill_price():.3f}")
+    def summary(
+        self,
+        orders: Orders,
+        indents: int = 0,
+        verbose: bool = False
+    ) -> None:
+        afp = self.dim("Avg entry price:",
+                       f"{orders.avg_accumulation_fill_price():.3f}")
+        acp = self.dim('Avg close price:',
+                       f"{orders.avg_close_fill_price():.3f}")
         qty = self.dim('Qty:', f"{orders.total_qty()}")
         ss = f"{afp} {acp} {qty}"
-        s = self.dim(f'Orders: ', str(len(orders)))
+        s = self.dim('Orders: ', str(len(orders)))
         mssg = f"{s} {ss}"
         print(self.indent(mssg, indents))
 
-    def lines(self, orders: Orders, indents:int = 0, verbose:bool = False, show_signals:bool = False) -> None:
+    def lines(
+        self,
+        orders: Orders,
+        indents: int = 0,
+        verbose: bool = False,
+        show_signals: bool = False
+    ) -> None:
         fillsView = FillsView()
         self.summary(orders, indents, verbose)
         for o in sorted(orders, key=lambda o: o.created_at):
@@ -27,7 +38,7 @@ class OrderView(View):
             if show_signals:
                 SignalView().line(o.signal, indents, verbose)
 
-    def _line(self, order: Order, indents: int = 0, verbose:bool = False):
+    def _line(self, order: Order, indents: int = 0, verbose: bool = False):
         o = order
         pric = self.left_pad(f"{o.price:.3f}", 9)
         qty = "{:<6}".format(o.qty)
@@ -44,6 +55,7 @@ class OrderView(View):
         bot_id = self.dim('bot id:', str(o.bot_id))
         exch_id = self.dim('exch id:', o.exchange_id)
         verb = f" {o.symbol} {pos_id} {bot_id} {exch_id}" if verbose else ''
-        
+
         p = f"{sid} {qty} at {pric} {o.order_type} {filled}  {limit_price} {reduce}{typ}  {id}{verb}"
         print(self.indent(p, indents + 1))
+

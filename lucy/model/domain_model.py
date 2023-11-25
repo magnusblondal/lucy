@@ -1,6 +1,6 @@
-
 from lucy.model.id import Id
 from lucy.application.events.event import DomainEvent
+
 
 class DomainModel:
     id: Id
@@ -14,3 +14,4 @@ class DomainModel:
         if self._events is None:
             self._events = []
         self._events.append(event)
+

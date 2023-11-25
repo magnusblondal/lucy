@@ -1,4 +1,3 @@
-
 from rich import inspect
 from lucy.infrastructure.repos.position_repository import PositionRepository
 from lucy.model.id import Id
@@ -7,12 +6,14 @@ from lucy.infrastructure.repos.bot_repository import BotRepository
 from lucy.main_logger import MainLogger
 import lucy.application.events.bus as bus
 
+
 class AuditBot(Usecase):
     def handle(self, id: str):
         '''Audit a bot'''
         bot = BotRepository().fetch(id)
         bot.audit()
         bus.publish(bot.events())
+
 
 class ProfitOrLossCalculationForPosition(Usecase):
     def __init__(self):
@@ -32,7 +33,9 @@ class ProfitOrLossCalculationForPosition(Usecase):
                 mssg = "is empty"
             else:
                 mssg = "is unknown"
-            self.logger.info(f"ProfitOrLossCalculationForPosition: No position found for order id: {order_id} {mssg}")
+            self.logger.info(
+                f"ProfitOrLossCalculationForPosition: No position found for order id: {order_id} {mssg}")
             return
         position.calculate_profit_loss()
         bus.publish(position.events())
+

@@ -11,8 +11,17 @@ import ssl
 
 from .flex import Account, Flex
 
+
 class FuturesApi(object):
-    def __init__(self, apiPath, apiPublicKey="", apiPrivateKey="", timeout=10, checkCertificate=True, useNonce=False):
+    def __init__(
+        self,
+        apiPath,
+        apiPublicKey="",
+        apiPrivateKey="",
+        timeout=10,
+        checkCertificate=True,
+        useNonce=False
+    ):
         self.apiPath = apiPath
         self.apiPublicKey = apiPublicKey
         self.apiPrivateKey = apiPrivateKey
@@ -21,7 +30,7 @@ class FuturesApi(object):
         self.checkCertificate = checkCertificate
         self.useNonce = useNonce
 
-    ##### public endpoints #####
+    # public endpoints ----------------------------------------------
 
     # returns all instruments with specifications
     def get_instruments(self):
@@ -48,7 +57,7 @@ class FuturesApi(object):
             postUrl = "symbol=%s" % symbol
         return self.make_request("GET", endpoint, postUrl=postUrl)
 
-    ##### private endpoints #####
+    # public endpoints ----------------------------------------------
 
     # returns key account information
     # Deprecated because it returns info about the Futures margin account
@@ -69,7 +78,17 @@ class FuturesApi(object):
         return [Flex(flex)]
 
     # places an order
-    def send_order(self, orderType, symbol, side, size, limitPrice, stopPrice=None, clientOrderId=None, reduce_only: bool=False):
+    def send_order(
+        self,
+        orderType,
+        symbol,
+        side,
+        size,
+        limitPrice,
+        stopPrice=None,
+        clientOrderId=None,
+        reduce_only: bool = False
+    ):
         endpoint = "/derivatives/api/v3/sendorder"
         postBody = "orderType=%s&symbol=%s&side=%s&size=%s&limitPrice=%s" % (
             orderType, symbol, side, size, limitPrice)
@@ -79,14 +98,14 @@ class FuturesApi(object):
 
         if clientOrderId is not None:
             postBody += "&cliOrdId=%s" % clientOrderId
-        
+
         if reduce_only:
             postBody += "&reduceOnly=%s" % reduce_only
 
         return self.make_request("POST", endpoint, postBody=postBody)
-        
 
     # places an order
+
     def send_order_1(self, order):
         endpoint = "/derivatives/api/v3/sendorder"
         postBody = urllib.urlencode(order)
@@ -107,7 +126,6 @@ class FuturesApi(object):
         postBody = "order_id=%s" % order_id
         return self.make_request("POST", endpoint, postBody=postBody)
 
-    
     def cancel_order_by_client_id(self, cli_ord_id=None):
         """
         Cancels order, based on provided (client) order id
@@ -140,8 +158,10 @@ class FuturesApi(object):
 
         return self.make_request("POST", endpoint, postBody=postbody)
 
-    # places or cancels orders in batch
     def send_batchorder(self, jsonElement):
+        """
+        places or cancels orders in batch
+        """
         endpoint = "/derivatives/api/v3/batchorder"
         postBody = "json=%s" % jsonElement
         return self.make_request("POST", endpoint, postBody=postBody)
@@ -152,11 +172,10 @@ class FuturesApi(object):
         """
         endpoint = "/derivatives/api/v3/openorders"
         return self.make_request("GET", endpoint)
-    
+
     def get_order_status(self, order_ids):
         endpoint = "/derivatives/api/v3/orders/status"
-        postBody = f"orderIds=%s" % order_ids
-        # print(postBody)
+        postBody = "orderIds=%s" % order_ids
         return self.make_request("POST", endpoint,  postBody=postBody)
 
     def get_fills(self, lastFillTime=""):
@@ -218,13 +237,25 @@ class FuturesApi(object):
 
         return self.make_request_raw("GET", endpoint, postUrl)
 
-    def _get_historical_elements(self, elementType, since=None, before=None, sort=None, limit=1000):
+    def _get_historical_elements(
+        self,
+        elementType,
+        since=None,
+        before=None,
+        sort=None,
+        limit=1000
+    ):
         elements = []
-
         continuationToken = None
 
         while True:
-            res = self._get_partial_historical_elements(elementType, since = since, before = before, sort = sort, continuationToken = continuationToken)
+            res = self._get_partial_historical_elements(
+                elementType,
+                since=since,
+                before=before,
+                sort=sort,
+                continuationToken=continuationToken
+            )
             body = json.loads(res.read().decode('utf-8'))
             elements = elements + body['elements']
 
@@ -241,63 +272,120 @@ class FuturesApi(object):
 
     def get_orders(self, since=None, before=None, sort=None, limit=1000):
         """
-        Retrieves orders of your account. With default parameters it gets the 1000 newest orders.
-        :param since: Timestamp in milliseconds. Retrieves orders starting at this time rather than the newest/latest.
-        :param before: Timestamp in milliseconds. Retrieves orders before this time.
+        Retrieves orders of your account. Defaults to 1000 newest orders.
+        :param since: Timestamp in ms. Retrieves orders starting at this time.
+        :param before: Timestamp in ms. Retrieves orders before this time.
         :param sort: String "asc" or "desc". The sorting of orders.
         :param limit: Amount of orders to be retrieved.
         :return: List of orders
         """
-        return self._get_historical_elements('orders', since, before, sort, limit)
+        return self._get_historical_elements(
+            'orders',
+            since,
+            before,
+            sort,
+            limit
+        )
 
     def get_executions(self, since=None, before=None, sort=None, limit=1000):
         """
-        Retrieves executions of your account. With default parameters it gets the 1000 newest executions.
-        :param since: Timestamp in milliseconds. Retrieves executions starting at this time rather than the newest/latest.
-        :param before: Timestamp in milliseconds. Retrieves executions before this time.
+        Retrieves executions of your account. Defaults to 1000 newest.
+        :param since: Timestamp in ms. Executions starting at this time.
+        :param before: Timestamp in ms. Executions before this time.
         :param sort: String "asc" or "desc". The sorting of executions.
         :param limit: Amount of executions to be retrieved.
         :return: List of executions
         """
-        return self._get_historical_elements('executions', since, before, sort, limit)
+        return self._get_historical_elements(
+            'executions',
+            since,
+            before,
+            sort,
+            limit
+        )
 
-    def get_market_price(self, symbol, since=None, before=None, sort=None, limit=1000):
+    def get_market_price(
+        self,
+        symbol,
+        since=None,
+        before=None,
+        sort=None,
+        limit=1000
+    ):
         """
-        Retrieves prices of given symbol. With default parameters it gets the 1000 newest prices.
+        Retrieves prices of given symbol. Defaults to 1000 newest prices.
         :param symbol: Name of a symbol. For example "PI_XBTUSD".
-        :param since: Timestamp in milliseconds. Retrieves prices starting at this time rather than the newest/latest.
-        :param before: Timestamp in milliseconds. Retrieves prices before this time.
+        :param since: Timestamp in milliseconds. Prices starting at this time.
+        :param before: Timestamp in milliseconds. Prices before this time.
         :param sort: String "asc" or "desc". The sorting of prices.
         :param limit: Amount of prices to be retrieved.
         :return: List of prices
         """
-        return self._get_historical_elements('market/' + symbol + '/price', since, before, sort, limit)
+        return self._get_historical_elements(
+            'market/' + symbol + '/price',
+            since,
+            before,
+            sort,
+            limit
+        )
 
-    def get_market_orders(self, symbol, since=None, before=None, sort=None, limit=1000):
+    def get_market_orders(
+        self,
+        symbol,
+        since=None,
+        before=None,
+        sort=None,
+        limit=1000
+    ):
         """
-        Retrieves orders of given symbol. With default parameters it gets the 1000 newest orders.
+        Retrieves orders of given symbol. Defaults to 1000 newest orders.
         :param symbol: Name of a symbol. For example "PI_XBTUSD".
-        :param since: Timestamp in milliseconds. Retrieves orders starting at this time rather than the newest/latest.
-        :param before: Timestamp in milliseconds. Retrieves orders before this time.
+        :param since: Timestamp in ms. Retrieves orders starting at this time.
+        :param before: Timestamp in ms. Retrieves orders before this time.
         :param sort: String "asc" or "desc". The sorting of orders.
         :param limit: Amount of orders to be retrieved.
         :return: List of orders
         """
-        return self._get_historical_elements('market/' + symbol + '/orders', since, before, sort, limit)
+        return self._get_historical_elements(
+            'market/' + symbol + '/orders',
+            since,
+            before,
+            sort,
+            limit
+        )
 
-    def get_market_executions(self, symbol, since=None, before=None, sort=None, limit=1000):
+    def get_market_executions(
+        self,
+        symbol,
+        since=None,
+        before=None,
+        sort=None,
+        limit=1000
+    ):
         """
-        Retrieves executions of given symbol. With default parameters it gets the 1000 newest executions.
+        Executions of given symbol. Defaults to 1000 newest executions.
         :param symbol: Name of a symbol. For example "PI_XBTUSD".
-        :param since: Timestamp in milliseconds. Retrieves executions starting at this time rather than the newest/latest.
-        :param before: Timestamp in milliseconds. Retrieves executions before this time.
+        :param since: Timestamp in ms. Executions starting at this time.
+        :param before: Timestamp in milliseconds. Executions before this time.
         :param sort: String "asc" or "desc". The sorting of executions.
         :param limit: Amount of executions to be retrieved.
         :return: List of executions
         """
-        return self._get_historical_elements('market/' + symbol + '/executions', since, before, sort, limit)
-    
-    def ohlc(self, pair:str, resolution:str = '1h', tick_type: str = 'trade', from_time:int = 0):
+        return self._get_historical_elements(
+            'market/' + symbol + '/executions',
+            since,
+            before,
+            sort,
+            limit
+        )
+
+    def ohlc(
+        self,
+        pair: str,
+        resolution: str = '1h',
+        tick_type: str = 'trade',
+        from_time: int = 0
+    ):
         '''
         resolution: "1m", "5m", "15m", "30m", "1h", "4h", "12h", "1d", "1w"
         tick_type:  "spot", "mark", "trade"
@@ -306,11 +394,11 @@ class FuturesApi(object):
         if from_time != "":
             postUrl = "from=%s" % from_time
         else:
-            postUrl = ""    
-        endpoint = f'api/charts/v1/{tick_type}/{pair}/{resolution}'   
+            postUrl = ""
+        endpoint = f'api/charts/v1/{tick_type}/{pair}/{resolution}'
         res = self.make_request("GET", endpoint, postUrl=postUrl)
         return json.loads(res)
-    
+
     # signs a message
     def sign_message(self, endpoint, postData, nonce=""):
 
@@ -328,7 +416,8 @@ class FuturesApi(object):
         # step 3: base64 decode apiPrivateKey
         secretDecoded = base64.b64decode(self.apiPrivateKey)
 
-        # step 4: use result of step 3 to has the result of step 2 with HMAC-SHA512
+        # step 4:
+        # use result of step 3 to has the result of step 2 with HMAC-SHA512
         hmac_digest = hmac.new(secretDecoded, hash_digest,
                                hashlib.sha512).digest()
 
@@ -384,4 +473,9 @@ class FuturesApi(object):
 
     # sends an HTTP request and read response body
     def make_request(self, requestType, endpoint, postUrl="", postBody=""):
-        return self.make_request_raw(requestType, endpoint, postUrl, postBody).read().decode("utf-8")
+        return self.make_request_raw(
+            requestType,
+            endpoint,
+            postUrl,
+            postBody
+        ).read().decode("utf-8")

@@ -7,37 +7,38 @@ class Symbol(object):
         if s[-3:] != 'usd':
             s = f"{s}usd"
         return s
-    
+
     def token(self) -> str:
         '''Token part of the trading pair'''
         s = self.symbol[3:] if self.symbol[:3] == 'pf_' else self.symbol
         s = s[:-3] if s[-3:] == 'usd' else s
         return s
-    
+
     def __eq__(self, o: object) -> bool:
         if isinstance(o, str):
             return str(self) == str(Symbol(o))
         if isinstance(o, Symbol):
             return str(self) == str(o)
         return False
-            
+
     def __str__(self) -> str:
         return self.pf()
-    
+
     @staticmethod
     def DOT():
         return Symbol('dot')
-    
+
     @staticmethod
     def ATOM():
         return Symbol('atom')
-    
+
     @staticmethod
     def empty():
         return Symbol("")
-    
+
     def is_empty(self):
         return self.symbol == ""
+
 
 class Symbols(list[Symbol]):
     def __init__(self, symbols: list[Symbol] = None):
@@ -45,7 +46,7 @@ class Symbols(list[Symbol]):
 
     def __str__(self) -> str:
         return ", ".join([str(s) for s in self])
-    
+
     def tokens(self) -> list[str]:
         '''Returns  a list of the token names'''
         return [s.token() for s in self]
@@ -53,10 +54,15 @@ class Symbols(list[Symbol]):
     def token_list(self) -> str:
         '''Returns the token names contained separated by space'''
         return " ".join(self.tokens())
-    
+
     @staticmethod
     def from_str(symbols: str) -> 'Symbols':
-        '''Returns a Symbols object from a string of symbols separated by space or comma'''
+        '''
+        Returns a Symbols object from a string of symbols separated by space or comma'''
         if ',' in symbols:
-            return Symbols([Symbol(s.replace(' ', '')) for s in symbols.split(",")])
+            return Symbols([Symbol(s.replace(
+                ' ',
+                ''
+            )) for s in symbols.split(",")])
         return Symbols([Symbol(s) for s in symbols.split(" ")])
+

@@ -1,7 +1,9 @@
 import shortuuid
 
+
 def generate_id():
     return shortuuid.ShortUUID().random(length=10)
+
 
 class Id:
     id: str
@@ -21,20 +23,19 @@ class Id:
 
     def make_combined_id(self) -> str:
         return f"{self.id}_{generate_id()}"
-    
 
     @staticmethod
     def make():
         return Id(generate_id())
-    
+
     @staticmethod
     def empty():
         id = Id("")
         id.id = ""
         return id
-    
+
     def is_empty(self):
         return self.id == ""
-    
+
     def __bool__(self) -> bool:
         return not self.is_empty()

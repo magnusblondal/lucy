@@ -1,4 +1,3 @@
-from typing import List
 from rich import print
 # from rich import inspect
 # from rich.panel import Panel
@@ -7,15 +6,25 @@ from lucy.application.trading.flex import Currency
 
 from .view import View
 
-#TODO: Taka á mismunandi accounts, núna er þetta bara flex
+# TODO: Taka á mismunandi accounts, núna er þetta bara flex
+
 
 class CurrencyView(View):
-    def listi(self, currency: Currency, header: str=None) -> None:
+    def listi(self, currency: Currency, header: str = None) -> None:
         table = Table()
         if header:
             table.title = header
 
-        cols = ["Type", "Balance Value", "Portfolio Value", "Collateral Value", "PnL", "Unrealized Funding", "Total Unrealized", "Available Margin"]
+        cols = [
+            "Type",
+            "Balance Value",
+            "Portfolio Value",
+            "Collateral Value",
+            "PnL",
+            "Unrealized Funding",
+            "Total Unrealized",
+            "Available Margin",
+        ]
         for c in cols:
             table.add_column(f"[grey54]{c}")
 
@@ -27,7 +36,8 @@ class CurrencyView(View):
             uFunding = "{:>8}".format(f"{c.unrealizedFunding:.2f}")
             tUnrealized = "{:>8}".format(f"{c.totalUnrealized:.2f}")
             aMargin = "{:>8}".format(f"{c.availableMargin:.2f}")
-            table.add_row(c.type, bVal, pVal, cVal, pnl, uFunding, tUnrealized, aMargin)
+            table.add_row(c.type, bVal, pVal, cVal, pnl,
+                          uFunding, tUnrealized, aMargin)
         print(table)
 
 
@@ -56,3 +66,4 @@ class CurrencyView(View):
 # availableMargin: 119.83
 # marginEquity: 119.83
 # type: multiCollateralMarginAccount
+

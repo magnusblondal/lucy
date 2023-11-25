@@ -1,6 +1,7 @@
 from .strategy import Strategy
 from .bb_breakout import BBbreakout
 from .rsi_crossover import RsiCrossover
+from .price_delta import PriceDelta
 
 import sys, inspect
 

@@ -1,11 +1,10 @@
-
-
 from typing import Optional
 from pydantic import BaseModel
-from lucy.model.interval import Interval
+
 
 class CreateBot(BaseModel):
     pass
+
 
 class CreateDcaBot(CreateBot):
     name: str
@@ -21,6 +20,6 @@ class CreateDcaBot(CreateBot):
     active: bool = True
     strategy: str = 'BBbreakout'
 
+
 class EditDcaBot(CreateDcaBot):
     pass
-

@@ -1,5 +1,10 @@
 from datetime import datetime
 
+
+def val_or_empty(prop: str, ticker) -> str:
+    return ticker["prop"] if "prop" in ticker.keys() else ""
+
+
 class Ticker:
     tag: str                        # "perpetual"
     pair: str                       # "COMP:USD"
@@ -22,28 +27,27 @@ class Ticker:
     fundingRatePrediction: float    # -0.000444202863504177
     postOnly: bool                  # false
 
-
     @staticmethod
     def from_kraken(ticker) -> 'Ticker':
         t = Ticker()
-        t.tag = ticker["tag"]               if "tag" in ticker.keys() else ""
-        t.pair = ticker["pair"]             if "pair" in ticker.keys() else ""
-        t.symbol = ticker["symbol"]         if "symbol" in ticker.keys() else ""
-        t.markPrice = ticker["markPrice"]   if "markPrice" in ticker.keys() else 0
-        t.bid = ticker["bid"]               if "bid" in ticker.keys() else 0
-        t.bidSize = ticker["bidSize"]       if "bidSize" in ticker.keys() else 0
-        t.ask = ticker["ask"]               if "ask" in ticker.keys() else 0
-        t.askSize = ticker["askSize"]       if "askSize" in ticker.keys() else 0
-        t.vol24h = ticker["vol24h"]             if "vol24h" in ticker.keys() else 0
-        t.volumeQuote = ticker["volumeQuote"]   if "volumeQuote" in ticker.keys() else 0
-        t.openInterest = ticker["openInterest"] if "openInterest" in ticker.keys() else 0
-        t.open24h = ticker["open24h"]           if "open24h" in ticker.keys() else 0
-        t.indexPrice = ticker["indexPrice"]     if "indexPrice" in ticker.keys() else 0
-        t.last = ticker["last"]                 if "last" in ticker.keys() else 0
-        t.lastTime = ticker["lastTime"]         if "lastTime" in ticker.keys() else 0
-        t.lastSize = ticker["lastSize"]         if "lastSize" in ticker.keys() else 0
-        t.suspended = ticker["suspended"]       if "suspended" in ticker.keys() else False
-        t.fundingRate = ticker["fundingRate"]   if "fundingRate" in ticker.keys() else 0
-        t.fundingRatePrediction = ticker["fundingRatePrediction"] if "fundingRatePrediction" in ticker.keys() else 0
-        t.postOnly = ticker["postOnly"]         if "postOnly" in ticker.keys() else False
+        t.tag = val_or_empty("tag", ticker)
+        t.pair = val_or_empty("pair", ticker)
+        t.symbol = val_or_empty("symbol", ticker)
+        t.markPrice = val_or_empty("markPrice", ticker)
+        t.bid = val_or_empty("bid", ticker)
+        t.bidSize = val_or_empty("bidSize", ticker)
+        t.ask = val_or_empty("ask", ticker)
+        t.askSize = val_or_empty("askSize", ticker)
+        t.vol24h = val_or_empty("vol24h", ticker)
+        t.volumeQuote = val_or_empty("volumeQuote", ticker)
+        t.openInterest = val_or_empty("openInterest", ticker)
+        t.open24h = val_or_empty("open24h", ticker)
+        t.indexPrice = val_or_empty("indexPrice", ticker)
+        t.last = val_or_empty("last", ticker)
+        t.lastTime = val_or_empty("lastTime", ticker)
+        t.lastSize = val_or_empty("lastSize", ticker)
+        t.suspended = val_or_empty("suspended", ticker)
+        t.fundingRate = val_or_empty("fundingRate", ticker)
+        t.fundingRatePrediction = val_or_empty("fundingRatePrediction", ticker)
+        t.postOnly = val_or_empty("postOnly", ticker)
         return t

@@ -2,6 +2,7 @@
 def val(obj, key, default=None):
     return obj[key] if key in obj.keys() else default
 
+
 class Instrument:
     symbol: str
     type: str
@@ -19,31 +20,52 @@ class Instrument:
     post_only: bool
     fee_schedule_uid: str
     category: str
-    # tags: 
+    # tags:
 
     def __str__(self) -> str:
-        return f"{self.symbol} type: {self.type} underlying: {self.underlying} tick_size: {self.tick_size} contract_size: {self.contract_size} tradeable: {self.tradeable} impact_mid_size: {self.impact_mid_size} max_position_size: {self.max_position_size} opening_date: {self.opening_date} funding_rate_coefficient: {self.funding_rate_coefficient} max_relative_funding_rate: {self.max_relative_funding_rate} isin: {self.isin} contract_value_trade_precision: {self.contract_value_trade_precision} post_only: {self.post_only} fee_schedule_uid: {self.fee_schedule_uid} category: {self.category}"
+        sym = f"{self.symbol}"
+        typ = f"type: {self.type}"
+        underl = f"underlying: {self.underlying}"
+        t_size = f"tick_size: {self.tick_size}"
+        size = f"contract_size: {self.contract_size}"
+        trabl = f"tradeable: {self.tradeable}"
+        ims = f"impact_mid_size: {self.impact_mid_size}"
+        mps = f"max_position_size: {self.max_position_size}"
+        od = f"opening_date: {self.opening_date}"
+        fre = f"funding_rate_coefficient: {self.funding_rate_coefficient}"
+        mrfr = f"max_relative_funding_rate: {self.max_relative_funding_rate}"
+        isin = f"isin: {self.isin}"
+        cvtp = f"contr_val_trade_prec: {self.contract_value_trade_precision}"
+        po = f"post_only: {self.post_only}"
+        fsu = f"fee_schedule_uid: {self.fee_schedule_uid}"
+        cat = f"category: {self.category}"
+        return f"{sym} {typ} {underl} {t_size} {size} {trabl} {ims} {mps} {od} {fre} {mrfr} {isin} {cvtp} {po} {fsu} {cat}"
 
     @staticmethod
     def from_kraken(inst) -> 'Instrument':
-        i =  Instrument()
-        i.symbol                            = val(inst, 'symbol', '')                       # "pi_xbtusd",
-        i.type                              = val(inst, 'type')                             # "futures_inverse",
-        i.underlying                        = val(inst, 'underlying', '')                   # "rr_xbtusd",
-        i.tick_size                         = val(inst, 'tickSize')                         # 0.5,
-        i.contract_size                     = val(inst, 'contractSize')                     # 1,
-        i.tradeable                         = val(inst, 'tradeable')                        # true,
-        i.impact_mid_size                   = val(inst, 'impactMidSize')                    # 1000.00,
-        i.max_position_size                 = val(inst, 'maxPositionSize')                  # 75000000.00000000000,
-        i.opening_date                      = val(inst, 'openingDate')                      # "2018-08-31T00:00:00.000Z",
-        i.funding_rate_coefficient          = val(inst, "fundingRateCoefficient")           # 24,
-        i.max_relative_funding_rate         = val(inst, "maxRelativeFundingRate")           # 0.0025,
-        i.isin                              = val(inst, "isin")                             # "GB00J62YGL67",
-        i.contract_value_trade_precision    = val(inst, "contractValueTradePrecision")      # 0,
-        i.post_only                         = val(inst, "postOnly")                         # false,
-        i.fee_schedule_uid                  = val(inst, "feeScheduleUid")                   # "eef90775-995b-4596-9257-0917f6134766",
-        i.category                          = val(inst, "category")                         # "",
-        # i.tags = inst["tags"]                                                             # []
+        i = Instrument()
+        i.symbol = val(inst, 'symbol', '')
+        # "futures_inverse",
+        i.type = val(inst, 'type')
+        # "rr_xbtusd",
+        i.underlying = val(inst, 'underlying', '')
+        i.tick_size = val(inst, 'tickSize')
+        i.contract_size = val(inst, 'contractSize')
+        i.tradeable = val(inst, 'tradeable')
+        i.impact_mid_size = val(inst, 'impactMidSize')
+        i.max_position_size = val(inst, 'maxPositionSize')
+        i.opening_date = val(inst, 'openingDate')
+        i.funding_rate_coefficient = val(
+            inst, "fundingRateCoefficient")
+        i.max_relative_funding_rate = val(
+            inst, "maxRelativeFundingRate")
+        i.isin = val(inst, "isin")
+        i.contract_value_trade_precision = val(
+            inst, "contractValueTradePrecision")
+        i.post_only = val(inst, "postOnly")
+        i.fee_schedule_uid = val(inst, "feeScheduleUid")
+        i.category = val(inst, "category")
+        # i.tags = inst["tags"]
         # marginLevels = inst['marginLevels']
         # "retailMarginLevels": [
         return i
@@ -61,15 +83,15 @@ class Instruments:
 
     def __iter__(self):
         return iter(self.instruments.values())
-    
+
     def __len__(self):
         return len(self.instruments)
-    
+
     def pf(self, symbol: str):
         '''Returns the perpetual future symbol for the given symbol'''
         s = f'pf_{symbol.lower()}usd'
         return s if s in self.instruments.keys() else None
-    
+
 # rr Reference Rate
 # in Real-Time Index
 # fi Futures Margin Account

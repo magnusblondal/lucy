@@ -1,0 +1,156 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © magnusb
+
+//@version=5
+strategy(shorttitle="Price Delta", title="Price Delta", format = format.price, overlay=true, default_qty_value=100, commission_value = .1, pyramiding = 20, slippage = 0, calc_on_order_fills = false, initial_capital = 1000, currency = currency.NONE, max_labels_count = 500, use_bar_magnifier = false)
+
+baseOrder           = input.float(  100,    "Base order size",                  minval = 0,                     group='Entry')
+feePercentage       = input.float(  0.1,    "Fees (%)",             step=0.1,   minval = 0.05,                  group='Entry')
+
+stdDevLevel         = input.int(    2,      "Standard Deviations",              minval= 1,      maxval = 3,     group="Entry")
+window              = input.int(    500,    "Window",               step=50,    minval=25,                      group="Entry")
+
+// TP
+targetProfit        = input.float(  1.0,    "Target profit (%)",    step=0.1,   minval = 0.05,                  group='Target')
+tpLongRsiTrigger    = input.int(    55,     "RSI trigger",                      minval = 1,     maxval = 99,    group='Target', tooltip = 'Trigger when RSI crosses down over')
+tpRsiLength         = input.int(    14,     "RSI length",                       minval = 1,     maxval = 999,   group='Target')
+
+// ----------------------------------------------------------------------------------------------
+// Stacking
+stackingThreshold   = input.float(  1,      "Threshold (%)",        step=0.1,   minval = 0.01,  maxval = 100,   group='Stacking', tooltip = 'Price should be below this level, from avg. buy price, to stgacking to be allowed')
+stackSize           = input.float(  200,    "Order size",                       minval = 0,                     group='Stacking')
+maxStackingOrders   = input.float(  4,      "Max stacking orders",              minval = 0,     maxval = 10,    group='Stacking')
+// -RSI
+rsiSoLength         = input.int(     7, "",                         step = 1,   minval = 2,     maxval = 30,    group = "Stacking", inline = 'rsiStacking')
+rsiSoType           = input.string(  'Crossing Up', '',                                                         group = 'Stacking', inline = 'rsiStacking', 
+                                         options = ['Less Than', 'Greater Than', 'Crossing Up', 'Crossing Down'], tooltip = "Safetry order is triggered only when this condition is met. As well as having exceeded Price Deviation")
+rsiSoLimit          = input.int(     35, '',                        step = 1,   minval = 1,     maxval = 100,   group = 'Stacking', inline = 'rsiStacking')
+rsiSoTimeframe      = input.timeframe('', "",                                                                   group = "Stacking", inline = 'rsiStacking')
+
+
+// Alerts text
+alertEntryTxt   = input.text_area("entry",  "Alert entry message",      group='alerts')
+alertSoTxt      = input.text_area("so",     "Alert add funds message",  group='alerts')
+alertExitTxt    = input.text_area("exit",   "Alert exit message",       group='alerts')
+
+// -----------------------------------------------------------------------------------------------
+// Carrover Var´s
+//
+var float           lastOrderPrice  = na
+var array<float>    deltas          = array.new<float>()
+
+
+bool	dealIsOpen      = strategy.opentrades > 0
+
+take_profit_price() =>
+    strategy.position_avg_price + (strategy.position_avg_price * ((targetProfit + feePercentage) / 100))
+
+can_add_stacking_order() =>
+    dealIsOpen and strategy.opentrades <= maxStackingOrders
+
+threshold() =>
+    lastOrderPrice * (1 - (stackingThreshold / 100) )
+
+rsiConditionMet(rsiSeries, dscType, limit) =>
+    dscType == 'Less Than'? rsiSeries < limit : dscType == 'Greater Than' ? rsiSeries > limit : dscType == 'Crossing Down'  ? ta.crossunder(rsiSeries, limit) : dscType == 'Crossing Up' ? ta.crossover(rsiSeries, limit) : na
+
+
+target      = dealIsOpen ? take_profit_price()  : na
+soThreshold = dealIsOpen ? threshold()          : na
+
+tp_rsi = ta.rsi(close, tpRsiLength)
+
+
+// -----------------------------------------------------------------------------------------------
+// Entry
+// -----------------------------------------------------------------------------------------------
+entry() =>
+    strategy.entry('DCA Order', strategy.long, qty = baseOrder / close, comment = 'BO', alert_message = alertEntryTxt)
+
+stack() =>
+    strategy.entry('DCA Order', strategy.long, qty = stackSize / close, comment = 'SO', alert_message = alertSoTxt)
+
+exit() =>
+    strategy.exit('exit', from_entry = 'DCA Order', qty_percent = 100, limit = target, comment = 'TP', alert_message = alertExitTxt)
+
+entrySignal() =>     
+    std = array.stdev(deltas)
+    close < close[1] - std * stdDevLevel
+
+exitSignal() =>
+    // triggerLongTp   = tpUseTaForTarget ? ta.crossunder(rsi, tpLongRsiTrigger) : true
+    triggerLongTp   = ta.crossunder(tp_rsi, tpLongRsiTrigger)
+    close >= target and triggerLongTp
+    
+
+stackingSignal() =>
+    rsiSource = close
+
+    rsi = request.security(syminfo.tickerid, rsiSoTimeframe, ta.rsi(rsiSource, rsiSoLength))
+    rsiSoCond = rsiConditionMet(rsi, rsiSoType, rsiSoLimit)
+    (close < soThreshold) and rsiSoCond
+    
+should_i_enter() =>
+    delta = close - close[1]
+    array.push(deltas, delta)
+    if array.size(deltas) > window
+        array.shift(deltas)
+    // mx = array.max(deltas)
+    // mn = array.min(deltas)
+    not dealIsOpen and entrySignal()
+
+
+should_i_close() =>
+    
+
+    dealIsOpen and exitSignal()
+
+
+should_i_stack() =>
+    dealIsOpen and can_add_stacking_order() and stackingSignal()
+
+entry_signal    = should_i_enter()
+exit_signal     = should_i_close()
+stacking_signal = should_i_stack()
+
+if entry_signal
+    entry()
+    lastOrderPrice := close
+
+else if exit_signal
+    exit()
+    lastOrderPrice := na
+    soThreshold := na
+
+else if stacking_signal
+    stack() 
+    lastOrderPrice := close
+
+// coloring of stacking thresholds (stronger by each level)
+alfa                    = maxStackingOrders * 10 - (strategy.opentrades * 10)
+more_stacking_allowed   = strategy.opentrades < maxStackingOrders + 1
+threshold_alfa          = more_stacking_allowed ? alfa : 70
+soThresholdCol              = color.new(color.orange, threshold_alfa)
+
+lastPriceCol                = color.new(color.gray, 50)
+avgPriceCol                 = color.new(color.navy, 10)
+soBgCol                     = color.new(color.orange, 40)
+soTextCol                   = color.new(color.white, 10)
+tpThresholdCol              = color.new(color.green, 0)
+
+
+// plotshape(entry_signal ? close : na, color=#008000, style=shape.triangleup, size=size.tiny, location=location.belowbar, title = "Long Signal", editable = true)  
+// plotshape(exit_signal ? close : na, color=#800000, style=shape.triangledown, size=size.tiny, location=location.abovebar, title = "Exit", editable = true)  
+
+// plot(dealIsOpen ? 25100 : 25000, 'trades', color = color.blue)
+// plot(strategy.opentrades, 'trades', color = color.blue)
+// plot(alfa, 'trades', color = color.blue)
+
+// Last Price
+plot(dealIsOpen ? lastOrderPrice : na, "Last Price", color = dealIsOpen ? lastPriceCol : na, style = plot.style_steplinebr)
+// AVG Price
+plot(dealIsOpen ? strategy.position_avg_price : na, "Average price", style = plot.style_steplinebr, color = avgPriceCol)
+// TP Price
+plot(dealIsOpen ? target : na, 'TP Target', style = plot.style_steplinebr, color = tpThresholdCol)
+// Mext SO Threshold level
+plot(dealIsOpen ? soThreshold : na, "SO Threshold", color = dealIsOpen ? soThresholdCol : na, style = plot.style_steplinebr)

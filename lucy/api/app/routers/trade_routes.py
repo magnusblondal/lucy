@@ -6,12 +6,14 @@ from lucy.model.symbol import Symbol
 
 router = APIRouter()
 
+
 @router.get("/trade/{symbol}/sell/{qty}")
 def sell(symbol: str, qty: float):
     order = Sell().handle(Symbol(symbol), qty)
     return {"data": order}
 
+
 @router.get("/trade/{symbol}/buy/{qty}")
-def sell(symbol: str, qty: float):
+def buy(symbol: str, qty: float):
     order = Buy().handle(Symbol(symbol), qty)
     return {"data": order}

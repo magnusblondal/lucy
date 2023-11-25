@@ -6,6 +6,7 @@ from .order_repository import OrderRepository
 from .signal_repository import SignalRepository
 from lucy.main_logger import MainLogger
 
+
 class PositionRepository(Repository):
     def __init__(self):
         super().__init__()
@@ -13,15 +14,15 @@ class PositionRepository(Repository):
 
     def _build(self, row) -> Position:
         return Position(
-            id          = Id( row[0]),
-            bot_id      = Id(row[1]),
-            symbol      = Symbol(row[2]),
-            side        = row[3],
-            profit      = row[4],
-            profit_pct  = row[5],
-            created_at  = row[6]
-            ) if row is not None else Position.empty()
-    
+            id=Id(row[0]),
+            bot_id=Id(row[1]),
+            symbol=Symbol(row[2]),
+            side=row[3],
+            profit=row[4],
+            profit_pct=row[5],
+            created_at=row[6]
+        ) if row is not None else Position.empty()
+
     def fetch(self, id: Id) -> Position:
         sql = '''
             SELECT * FROM positions WHERE id = %s
@@ -37,7 +38,7 @@ class PositionRepository(Repository):
         values = (bot_id.id,)
         rows = self._fetch_all(sql, values)
         return Positions([self._build(row) for row in rows])
-    
+
     def fetch_by_order(self, order_id: Id) -> Position:
         sql = '''
         select * from positions p
@@ -48,14 +49,20 @@ class PositionRepository(Repository):
         row = self._fetch_one(sql, values)
         pos = self._build(row)
         return self._fetch_data(pos)
-    
+
     def fetch_with_data(self, id: Id) -> Positions:
         pos = self.fetch(id)
         if pos is None:
             return None
         return self._fetch_data(pos)
 
-    def add(self, position_id: Id, bot_id: Id, symbol: Symbol, side: str) -> None:
+    def add(
+        self,
+        position_id: Id,
+        bot_id: Id,
+        symbol: Symbol,
+        side: str
+    ) -> None:
         sql = '''
             INSERT INTO positions (
             id, bot_id, symbol, profit, profit_pct, side
@@ -64,16 +71,22 @@ class PositionRepository(Repository):
                 %s, %s, %s, %s, %s, %s
             )
             '''
-        values = (str(position_id), 
-                  str(bot_id), 
-                  str(symbol), 
-                  0, 
-                  0, 
+        values = (str(position_id),
+                  str(bot_id),
+                  str(symbol),
+                  0,
+                  0,
                   side)
         self._execute(sql, values)
 
-    def update_profit(self, position_id: Id, profit: float, profit_pct: float) -> None:
-        self.logger.info(f"PositionRepository.update_profit: {position_id} {profit} {profit_pct}")
+    def update_profit(
+        self,
+        position_id: Id,
+        profit: float,
+        profit_pct: float
+    ) -> None:
+        self.logger.info(
+            f"PositionRepository.update_profit: {position_id} {profit} {profit_pct}")
         sql = '''
             UPDATE positions SET profit = %s, profit_pct = %s WHERE id = %s
             '''
@@ -84,3 +97,4 @@ class PositionRepository(Repository):
         pos.orders = OrderRepository().fetch_for_position(pos.id)
         pos.signals = SignalRepository().fetch_for_position(pos.id)
         return pos
+

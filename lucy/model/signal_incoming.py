@@ -4,6 +4,7 @@ from datetime import datetime
 from lucy.model.id import Id
 from lucy.model.signal import Signal
 
+
 class SignalIncoming(BaseModel):
     bot_id: str
     strategy: str

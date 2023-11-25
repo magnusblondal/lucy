@@ -1,19 +1,12 @@
-
-import time
-import base64
-import hashlib
-import hmac
 import json
 import urllib.request as urllib2
-import urllib.parse as urllib
-import ssl
 
 
 class KrakenApi(object):
-    def __init__(self):        
+    def __init__(self):
         self.uri = 'https://api.kraken.com/0/public/'
 
-    def ohlc(self, pair:str, interval:int = 60, since:int = 0):
+    def ohlc(self, pair: str, interval: int = 60, since: int = 0):
         url = f"{self.uri}OHLC?pair={pair}&interval={interval}"
         if since > 0:
             url += f"&since={since}"
@@ -22,3 +15,4 @@ class KrakenApi(object):
 
         response = urllib2.urlopen(request)
         return json.loads(response.read().decode("utf-8"))
+

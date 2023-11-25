@@ -5,16 +5,17 @@ import psycopg2.pool
 
 from config import settings
 
+
 class Repository:
-    def __init__(self):     
+    def __init__(self):
         self.pool = psycopg2.pool.SimpleConnectionPool(
-            minconn     = 1,
-            maxconn     = 10,
-            host        = settings.db_host,
-            port        = settings.db_port,
-            database    = settings.db_name,
-            user        = settings.db_user,
-            password    = settings.db_pass
+            minconn=1,
+            maxconn=10,
+            host=settings.db_host,
+            port=settings.db_port,
+            database=settings.db_name,
+            user=settings.db_user,
+            password=settings.db_pass
         )
 
     def _execute(self, sql: str, values):
@@ -35,8 +36,8 @@ class Repository:
         cursor.close()
         connection.close()
         return result
-    
-    def _fetch_all(self, sql: str, values= None):
+
+    def _fetch_all(self, sql: str, values=None):
         connection = self.pool.getconn()
         cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 

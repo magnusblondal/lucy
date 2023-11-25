@@ -9,9 +9,11 @@ from lucy.model.interval import Intervals
 from lucy.model.bot import DcaBot
 from lucy.infrastructure.repos.bot_repository import BotRepository
 
+
 class Runner(object):
     '''Starts Lucy, runs on a schedule, and executes the bots'''
     bots: list[DcaBot]
+
     def __init__(self):
         self.exchange = Exchange()
         self.bots = BotRepository().fetch_active_bots()
@@ -22,8 +24,8 @@ class Runner(object):
         print(f"Runner initialized {len(self.bots)} bots")
         bots_names = [b.name for b in self.bots]
         bots_names = ", ".join(bots_names)
-        self.logger.info(f"Runner initialized {len(self.bots)} bots: {bots_names}")
-        
+        self.logger.info(
+            f"Runner initialized {len(self.bots)} bots: {bots_names}")
 
     def start(self):
         '''Start Lucy'''
@@ -33,7 +35,7 @@ class Runner(object):
         while True:
             schedule.run_pending()
             time.sleep(1)
-    
+
     def tick(self):
         intervals = Intervals(datetime.now())
         for bot in self.bots:
@@ -41,5 +43,8 @@ class Runner(object):
                 bot.tick(intervals, self.exchange)
                 bus.publish(bot.events())
             except Exception as e:
-                self.logger.error(f"Tick: Error in bot {bot.name} {bot.interval}", exc_info=True)
+                self.logger.error(
+                    f"Tick: Error in bot {bot.name} {bot.interval}",
+                    exc_info=True
+                )
                 self.logger.error(e)

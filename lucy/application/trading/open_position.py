@@ -1,7 +1,7 @@
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
-from datetime import datetime
 from .ticker import Ticker
+
 
 @dataclass_json
 @dataclass
@@ -14,20 +14,19 @@ class OpenPosition:
     unrealizedFunding: float    # 5.231501383548871E-4,
     pnlCurrency: str            # "USD"
 
-    
     def is_short(self):
         return self.side == 'short'
-    
+
     def set_ticker(self, ticker: Ticker):
         self.ticker = ticker
 
     def ticker(self) -> Ticker:
         return self.ticker
-    
+
     def pnl(self) -> float:
         sde = 1 if self.side == 'long' else -1
         return self.size * (self.ticker.last - self.price) * sde
-    
+
         # "result":"success",
         # "openPositions":[
         #     {
@@ -41,3 +40,4 @@ class OpenPosition:
         #     }
         # ],
         # "serverTime":"2023-03-14T19:58:27.996Z"
+

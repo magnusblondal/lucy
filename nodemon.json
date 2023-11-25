@@ -1,0 +1,10 @@
+{
+  "ext": "py, json, toml",
+  "watch": [
+    "tests/",
+    "lucy/**"
+  ],
+  "exec": "python -m unittest discover -s tests",
+  "verbose": false,
+  "ignore": ".git, __pycache__/"
+}

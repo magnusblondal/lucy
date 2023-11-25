@@ -1,8 +1,8 @@
-
 from lucy.application.trading.exchange import Exchange
 from lucy.model.symbol import Symbol
 
 from ..usecase import Usecase
+
 
 class Sell(Usecase):
     def handle(self, symbol: Symbol, qty: float):
@@ -18,4 +18,3 @@ class Sell(Usecase):
         else:
             order = Exchange().short_market(symbol, qty)
             return order
-
